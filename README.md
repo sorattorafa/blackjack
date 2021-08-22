@@ -24,7 +24,15 @@ Tabela de conteúdos
 
 Descrição de implementação
 ==============
+## Cliente
+* Cliente deve logar com suas credenciais
+* Cliente deve escolher uma sala de jogo ou criar uma sala
+* Cliente deve ter crédito para poder jogar
+* Cliente deve escolher se quer apostar na rodada vigente ou não
 
+## Servidor
+
+## Baralho
 
 Pré-requisitos
 ==============

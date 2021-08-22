@@ -31,4 +31,19 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         }
     } //add_grade
 
+
+    public Mesa join_table(Jogador jogador) throws RemoteException {  
+
+        Connection db_connection = SQLiteConnection.connect(); 
+        try {
+   
+            Statement statement = db_connection.createStatement();
+
+        } catch (SQLException e) {
+         //   Response resp = new Response(0);
+       //     return resp;
+        }
+    } //add_grade
+
+
 } //list_notas

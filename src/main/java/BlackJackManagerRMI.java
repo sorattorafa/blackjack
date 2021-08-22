@@ -13,6 +13,14 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+// 1 login
+// Mesa entrar_na_mesa(jogador)
 public interface BlackJackManagerRMI extends Remote {
-    public Response login (String nickname, String password) throws RemoteException;
+    public Jogador login (String nickname, String password) throws RemoteException;
+    public Mesa join_table (Jogador jogador) throws RemoteException;
+    public List<Jogador> start_table(Jogador jogador, Mesa mesa) throws RemoteException;
+    public List<Carta> get_cartas_by_jogador(Jogador jogador, Mesa mesa) throws RemoteException;
+    public Jogador finish_table(Mesa mesa, Jogador jogador) throws RemoteException;
+    public Mesa get_stado_atual_mesa(Mesa mesa) throws RemoteException;
+
 }

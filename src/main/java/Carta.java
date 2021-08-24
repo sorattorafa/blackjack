@@ -7,7 +7,7 @@ public class Carta implements Serializable {
   public Carta(){
   }
 
-  public void set_name(int name) {
+  public void set_name(String name) {
     this.name = name;
   }
 
@@ -15,7 +15,7 @@ public class Carta implements Serializable {
     this.value = value;
   }
 
-  public int get_name() {
+  public String get_name() {
     return this.name;
   }
 

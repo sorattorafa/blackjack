@@ -39,9 +39,9 @@ public class Cliente {
         String message = "";
         for (int i = 0; i < cartas.size(); i++) {
             if (i < cartas.size() - 1) {
-                message += cartas.get(i).get_name();
+                message += cartas.get(i).get_name() + cartas.get(i).get_symbol();
             } else {
-                message += cartas.get(i).get_name() + ", ";
+                message += cartas.get(i).get_name() + cartas.get(i).get_symbol() + ", ";
             }
         }
 

@@ -1,9 +1,12 @@
 import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
+
 
 public class Mesa implements Serializable {
   private Integer id;
-  private List<Jogador> jogadores;
+  private List<Jogador> players;
+  private ArrayList<List<Carta>> players_hand;
   private Baralho baralho;
 
   public Mesa(){
@@ -14,8 +17,8 @@ public class Mesa implements Serializable {
     this.id = id;
   }
 
-  public void add_jogador(Jogador jogador) {
-    this.jogadores.add(jogador);
+  public void add_player(Jogador player) {
+    this.players.add(player);
   }
 
   public void set_baralho(Baralho baralho) {
@@ -26,8 +29,8 @@ public class Mesa implements Serializable {
     return this.id;
   }
 
-  public List<Jogador> get_jogadores(Mesa mesa) {
-    return this.jogadores;
+  public List<Jogador> get_players(Mesa mesa) {
+    return this.players;
   }
   
   public Baralho get_baralho() {

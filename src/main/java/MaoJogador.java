@@ -25,7 +25,7 @@ public class MaoJogador implements Serializable {
     this.player_id =player_id;
   }
 
-  public void get_player_id() {
+  public Integer get_player_id() {
     return this.player_id;
   }
 
@@ -35,7 +35,7 @@ public class MaoJogador implements Serializable {
     }
 
   public List<Carta> get_player_hand() {
-    return this.player_id;
+    return this.player_hand;
   }
   
 }

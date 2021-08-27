@@ -14,8 +14,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
-// 1 login
-// Mesa entrar_na_mesa(jogador)
+
 public interface BlackJackManagerRMI extends Remote {
     public Jogador login (String nickname, String password) throws RemoteException;
     public Mesa join_table (Jogador jogador) throws RemoteException;
@@ -30,9 +29,5 @@ public interface BlackJackManagerRMI extends Remote {
     public Integer get_player_table_status(Integer id_table, String player_nickname) throws RemoteException;
     public void keep_playing(Integer id_table, String player_nickname) throws RemoteException;
     public Mesa keep_current_play(Integer id_table) throws RemoteException;
-
-    // public List<Jogador> start_table(Jogador jogador, Mesa mesa) throws RemoteException;
-    // public List<Carta> get_cartas_by_jogador(Jogador jogador, Mesa mesa) throws RemoteException;
-    // public Jogador finish_table(Mesa mesa, Jogador jogador) throws RemoteException;
 
 }

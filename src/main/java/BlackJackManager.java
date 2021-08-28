@@ -16,10 +16,7 @@ import java.util.ArrayList;
 
 public class BlackJackManager extends UnicastRemoteObject implements BlackJackManagerRMI {
 
-    List<Jogador> jogadores_disponiveis = new ArrayList<Jogador>();
     List<Mesa> mesas = new ArrayList<Mesa>();
-    int total_mesas = 0;
-    int total_jogadores = 0;
 
     public BlackJackManager() throws RemoteException {
         super();
@@ -31,40 +28,45 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
         Connection db_connection = SQLiteConnection.connect(); 
         Jogador jogador = new Jogador();
-        String search_player_query = "SELECT * FROM jogador WHERE (nickname = " + String.valueOf(nickname) + ");";
+        String search_player_query = "SELECT * FROM jogador WHERE (nickname = " + String.valueOf(nickname) +  "AND password = " + password +  ");";
         Statement statement = db_connection.createStatement();
 
         try {
              /* search for JOGADOR */
             ResultSet resultSet = statement.executeQuery(search_player_query);
             if (!resultSet.isBeforeFirst()) {
-                /* NOT FOUND */
+                /* NOT FOUND jogador*/
+                
                 String create_jogador = "INSERT INTO jogador (nickname, password) VALUES (" + nickname + ", " + password + ");"; 
+                // create new jogador
                 statement.execute(create_matricula);
-                /* search for disiplina */
+                /* search for jogador */
                 ResultSet resultSet2 = statement.executeQuery(search_player_query);
                 if (!resultSet2.isBeforeFirst()) {
+                    throw new RemoteException(" Falha ao cadastrar jogador ");
                 }
                  
+            } else{
+
+                String nickname_user = resultSet.getInt("nickname");
+                int id = resultSet.getInt("id");
+                int cash = resultSet.getInt("cash");
             }
 
-            jogador.set_nickname(nickname);
-            jogador.set_password(password);
-            jogador.set_cash(0);
-            total_jogadores += 1;
-            jogador.set_id(total_jogadores);
+            jogador.set_nickname(nickname_user);
+            jogador.set_id(id);
+            jogador.set_cash(cash);
             
             
         } catch (SQLException e) {
-            return null;
+            throw new RemoteException(" Falha ao cadastrar jogador ");
         }
         return jogador;
     }
 
     @Override
     public Mesa join_table(Jogador jogador) throws RemoteException {  
-        jogadores_disponiveis.add(jogador);
-        
+    
         Mesa mesa = new Mesa();
         if (mesas.size() > 0) {
              for (Mesa mesa_i : mesas) {
@@ -78,7 +80,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             }  
         } else {
             try {
-                total_mesas += 1;
+                int total_mesa = mesas.size();
                 mesa.set_id(total_mesas);
                 mesa.set_total_cash(0);
 

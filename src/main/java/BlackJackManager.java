@@ -80,7 +80,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                     jogador.set_id(id);
                 }
             } catch(SQLException e2) {
-
+                throw new RemoteException(" Falha ao cadastrar jogador");
             }
         }
         return jogador;

@@ -29,22 +29,36 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Jogador login(String nickname, String password) throws RemoteException {
 
-        // Connection db_connection = SQLiteConnection.connect(); 
-        // try {
-
-        //     // Statement statement = db_connection.createStatement();
-            
-        // } catch (SQLException e) {
-        //     // return null;
-        // }
+        Connection db_connection = SQLiteConnection.connect(); 
         Jogador jogador = new Jogador();
-        jogador.set_nickname(nickname);
-        jogador.set_password(password);
-        jogador.set_cash(0);
-        total_jogadores += 1;
-        jogador.set_id(total_jogadores);
-        return jogador;
+        String search_player_query = "SELECT * FROM jogador WHERE (nickname = " + String.valueOf(nickname) + ");";
+        Statement statement = db_connection.createStatement();
 
+        try {
+             /* search for JOGADOR */
+            ResultSet resultSet = statement.executeQuery(search_player_query);
+            if (!resultSet.isBeforeFirst()) {
+                /* NOT FOUND */
+                String create_jogador = "INSERT INTO jogador (nickname, password) VALUES (" + nickname + ", " + password + ");"; 
+                statement.execute(create_matricula);
+                /* search for disiplina */
+                ResultSet resultSet2 = statement.executeQuery(search_player_query);
+                if (!resultSet2.isBeforeFirst()) {
+                }
+                 
+            }
+
+            jogador.set_nickname(nickname);
+            jogador.set_password(password);
+            jogador.set_cash(0);
+            total_jogadores += 1;
+            jogador.set_id(total_jogadores);
+            
+            
+        } catch (SQLException e) {
+            return null;
+        }
+        return jogador;
     }
 
     @Override

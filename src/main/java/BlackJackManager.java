@@ -11,10 +11,12 @@ import java.sql.*;
 import java.util.List;
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
+
 
 public class BlackJackManager extends UnicastRemoteObject implements BlackJackManagerRMI {
 
-    
+    List<Jogador> jogadores_disponiveis = new ArrayList<Jogador>();
     public BlackJackManager() throws RemoteException {
         super();
         System.out.println("Instance of Object created with success");
@@ -35,6 +37,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         jogador.set_nickname(nickname);
         jogador.set_password(password);
         jogador.set_cash(0);
+        jogadores_disponiveis.add(jogador);
         return jogador;
 
     }

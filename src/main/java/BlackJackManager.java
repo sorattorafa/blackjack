@@ -25,13 +25,18 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
         Connection db_connection = SQLiteConnection.connect(); 
         try {
-   
+
             Statement statement = db_connection.createStatement();
             
         } catch (SQLException e) {
             // return null;
         }
-        return new Jogador();
+        Jogador jogador = new Jogador();
+        jogador.set_nickname(nickname);
+        jogador.set_password(password);
+        jogador.set_cash(0);
+        return jogador;
+
     }
 
     @Override

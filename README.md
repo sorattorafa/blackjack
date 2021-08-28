@@ -57,7 +57,7 @@ $ javac -cp ":lib/*": *.java
 # Na pasta do src/main/java execute:
 $ rmiregistry
 # Em outro terminal execute:
-$ java -cp ":lib/*" Server
+$ java -cp ":lib/*" Servidor
 ```
 ## 🎲 Cliente
 ### Executando

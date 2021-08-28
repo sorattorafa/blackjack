@@ -7,6 +7,8 @@ public class Mesa implements Serializable {
   private Integer id;
   private List<Jogador> players_list = new ArrayList<Jogador>();
   private List<MaoJogador> players_hand = new ArrayList<MaoJogador>();
+  private List<StatusJogador> players_status = new ArrayList<StatusJogador>();
+
   private Baralho baralho;
   private Integer total_cash;
   
@@ -41,6 +43,17 @@ public class Mesa implements Serializable {
   public List<Jogador> players_list() {
     return this.players_list;
   }
+
+
+  public void add_player_status(StatusJogador jogador) {
+    this.players_status.add(jogador);
+  }
+  
+  public List<StatusJogador> players_status() {
+    return this.players_status;
+  }
+
+
     public void add_mao_jogador(MaoJogador maojogador) {
     this.players_hand.add(maojogador);
   }

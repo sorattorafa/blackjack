@@ -93,24 +93,42 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
              for (Mesa mesa_i : mesas) {
                     if (mesa_i.players_list().size() == 1) {
                         mesa_i.add_player(jogador);
+                        Integer player_id = jogador.get_id();
                         MaoJogador maojogador = new MaoJogador();
-                        maojogador.set_player_id(jogador.get_id());
+                        StatusJogador statusjogador = new StatusJogador();
+
+                        statusjogador.set_player_status(3);
+                        statusjogador.set_player_id(player_id);
+
+                        maojogador.set_player_id(player_id);
+                        
                         mesa_i.add_mao_jogador(maojogador);
+                        mesa_i.add_player_status(statusjogador);
                         mesa = mesa_i;
                     }
             }  
         } else {
             try {
+         
+                Integer player_id = jogador.get_id();
+                MaoJogador maojogador = new MaoJogador();
+                StatusJogador statusjogador = new StatusJogador();
                 int total_mesas = mesas.size();
+
+               /* Mao do statusjogador setters*/ 
+                statusjogador.set_player_status(5);
+                statusjogador.set_player_id(player_id);
+
+               /* Mao do jogador setters*/ 
+                maojogador.set_player_id(player_id);
+
+                /* Mesa setters*/
                 mesa.set_id(total_mesas);
                 mesa.set_total_cash(0);
-
                 mesa.set_baralho(new Baralho());
                 mesa.add_player(jogador);
-                MaoJogador maojogador = new MaoJogador();
-                maojogador.set_player_id(jogador.get_id());
-                mesa.add_mao_jogador(maojogador);       
-
+                mesa.add_mao_jogador(maojogador);
+                mesa.add_player_status(statusjogador);       
                 mesas.add(mesa);
             } catch (Exception e) {
                 System.out.println(e);

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class BlackJackManager extends UnicastRemoteObject implements BlackJackManagerRMI {
 
     List<Mesa> mesas = new ArrayList<Mesa>();
+    Connection db_connection = SQLiteConnection.connect(); 
 
     public BlackJackManager() throws RemoteException {
         super();
@@ -26,8 +27,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Jogador login(String nickname, String password) throws RemoteException {
         Jogador jogador = new Jogador();
-        String search_player_query = "SELECT J.nickname, J.id, J.cash FROM jogador AS J WHERE J.nickname IS \"" + String.valueOf(nickname) + "\" AND J.password IS \"" + String.valueOf(password) + "\" ;";
-        Connection db_connection = SQLiteConnection.connect(); 
+        String search_player_query = "SELECT J.nickname, J.id, J.cash FROM jogador AS J WHERE J.nickname IS \"" + String.valueOf(nickname) + "\" AND J.password IS \"" + String.valueOf(password) + "\";";
         System.out.println(search_player_query);
         try {
             Statement statement = db_connection.createStatement();

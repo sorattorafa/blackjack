@@ -19,17 +19,21 @@ import java.util.List;
 
 public class Cliente {
 
+    public static void clearScreen() {
+        System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    }
+
     private static String getUsername() {
         // Este método irá coletar o CÓDIGO da disciplina.
 
-        System.out.println("Username: ");
+        System.out.print("Username: ");
         return new Scanner(System.in).nextLine();
     }
 
     private static String getPassword() {
         // Este método irá coletar o CÓDIGO da disciplina.
 
-        System.out.println("Password: ");
+        System.out.print("Password: ");
         return new Scanner(System.in).nextLine();
     }
 
@@ -38,7 +42,7 @@ public class Cliente {
 
         String message = "";
         for (int i = 0; i < cartas.size(); i++) {
-            if (i < cartas.size() - 1) {
+            if (i <= cartas.size() - 1) {
                 message += cartas.get(i).get_name() + cartas.get(i).get_symbol();
             } else {
                 message += cartas.get(i).get_name() + cartas.get(i).get_symbol() + ", ";
@@ -47,6 +51,32 @@ public class Cliente {
 
         return message;
     }
+
+    private static String statusCode_treated(Integer statusCode) {
+        // Este método irá tratar o statusCode do servidor.
+        
+        String message = "";
+        switch (statusCode) {
+            case 1:
+                message = "Venceu!";
+                break;
+            case 2:
+                message = "Perdeu!";
+                break;
+            case 3:
+                message = "Aguardando...";
+                break;
+            case 4:
+                message = "Parou";
+                break;
+            case 5:
+                message = "Sua vez";
+                break;
+        }
+
+        return message;
+    }
+            
 
     private static String reloadScreen(BlackJackManagerRMI bjm, Jogador player, Mesa table) throws RemoteException {
         // Este método irá atualizar a tela do jogo mostrando todas as informações.
@@ -70,18 +100,18 @@ public class Cliente {
 
         List<Carta> player_cards = table.get_player_cards(player.get_id());
         Integer player_points = table.get_player_points(player_cards);
-        String player_status = bjm.get_player_status(table.get_id(), player.get_nickname());
+        Integer player_status = bjm.get_player_table_status(table.get_id(), player.get_nickname());
         message += "-------------------\n";
         message += "Suas cartas: " + showHand(player_cards) + " (" + player_points + " pontos)\n";
-        message += "Status: " + player_status + "\n";
+        message += "Status: " + statusCode_treated(player_status) + "\n";
         message += "-------------------\n\n";
 
         List<Carta> opponent_cards = table.get_player_cards(opponent.get_id());
         Integer opponent_points = table.get_player_points(opponent_cards);
-        String opponent_status = bjm.get_player_status(table.get_id(), opponent.get_nickname());
+        Integer opponent_status = bjm.get_player_table_status(table.get_id(), opponent.get_nickname());
         message += "-------------------\n";
         message += "Cartas de " + opponent.get_nickname() + ": " + showHand(opponent_cards) + " (" + opponent_points + ")\n";
-        message += "Status: " + opponent_status + "\n";
+        message += "Status: " + statusCode_treated(opponent_status) + "\n";
         message += "-------------------\n\n";
 
         return message;
@@ -103,16 +133,20 @@ public class Cliente {
 
         while (true) {
             String message = reloadScreen(bjm, player, table);
-            Runtime.getRuntime().exec("clear");
+            clearScreen();
             System.out.println(message);
-
+            
             Integer status = bjm.get_player_table_status(table.get_id(), player.get_nickname());
             // TODO ação do estado
             Thread.sleep(1000);
-            break;
+            table = bjm.get_estado_atual_mesa(table);
+            
+            if (true) {
+                break;
+            }
         }
 
-        System.out.println("Deseja Revanche (1) ou Sair para o Lobby (2): ");
+        System.out.print("Deseja Revanche (1) ou Sair para o Lobby (2): ");
         Integer decision = Integer.parseInt(new Scanner(System.in).nextLine());
 
         if (decision == 1) {
@@ -134,15 +168,15 @@ public class Cliente {
     public static void enter_game(BlackJackManagerRMI bjm, Jogador player) throws IOException, InterruptedException {
         // Este método irá iniciar o jogo.
 
-        Runtime.getRuntime().exec("clear");
+        clearScreen();
 
         System.out.println("Bem-vindo ao cassino Black Jack!");
-        System.out.println("Você deseja se juntar a uma mesa (1) ou sair (0): ");
+        System.out.print("Você deseja se juntar a uma mesa (1) ou sair (0): ");
         Integer requestType = Integer.parseInt(new Scanner(System.in).nextLine()); 
         while (requestType > 1|| requestType < 0) {
-            Runtime.getRuntime().exec("clear");
-            System.out.println("Não conheço este tipo de requisição.\n");
-            System.out.println("Você deseja se juntar a uma mesa (1) ou sair (0): ");
+            clearScreen();
+            System.out.println("Não conheço este tipo de requisição.");
+            System.out.print("Você deseja se juntar a uma mesa (1) ou sair (0): ");
             requestType = Integer.parseInt(new Scanner(System.in).nextLine());
         }
 

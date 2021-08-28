@@ -63,7 +63,7 @@ $ java -cp ":lib/*" Servidor
 ### Executando
 ```bash
 # Na pasta do src/main/java execute:
-$ java -cp ":lib/*" Client
+$ java -cp ":lib/*" Cliente
 ```
 
 Bibliotecas Utilizadas

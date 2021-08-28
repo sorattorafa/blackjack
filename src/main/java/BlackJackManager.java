@@ -36,12 +36,12 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             if (!resultSet.isBeforeFirst()) {
                 /* NOT FOUND jogador*/
                 
-                String create_jogador = "INSERT INTO jogador (nickname, password) VALUES (" + nickname + ", " + password + ");"; 
+                String create_jogador = "INSERT INTO jogador (nickname, password) VALUES ( '" + nickname + "', '" + password + "');"; 
                 statement.execute(create_jogador);
                 /* search for disiplina */
                 ResultSet resultSet2 = statement.executeQuery(search_player_query);
                 if (!resultSet2.isBeforeFirst()) {
-                    throw new RemoteException(" Falha ao cadastrar jogador21312312312312312312312312 ");
+                    throw new RemoteException(" Falha ao cadastrar jogador");
                 } else {
                      String nickname_user = resultSet2.getString("nickname");
                     int id = resultSet2.getInt("id");

@@ -64,7 +64,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             
             
         } catch (SQLException e) {
-            throw new RemoteException(" Falha ao cadastrar jogador ");
+            throw new RemoteException("Falha ao cadastrar jogador ");
         }
         return jogador;
     }
@@ -84,7 +84,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             }  
         } else {
             try {
-                int total_mesa = mesas.size();
+                int total_mesas = mesas.size();
                 mesa.set_id(total_mesas);
                 mesa.set_total_cash(0);
 

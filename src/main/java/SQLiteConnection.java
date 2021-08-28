@@ -17,7 +17,7 @@ public class SQLiteConnection{
 
   public static Connection connect() {    
     try {
-       connection = DriverManager.getConnection("jdbc:sqlite:./database/database2.db");
+       connection = DriverManager.getConnection("jdbc:sqlite:./database/database.db");
         System.out.println("BD connection success!");
 
     } catch (SQLException e) {

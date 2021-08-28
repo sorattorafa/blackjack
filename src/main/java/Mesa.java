@@ -57,6 +57,34 @@ public class Mesa implements Serializable {
     return null;
   }
 
+  List<Carta> get_player_cards(Integer player_id) {       
+    for (MaoJogador maojogador : this.players_hand) {
+      if (maojogador.get_player_id().equals(player_id)) {
+        return maojogador.get_player_hand();
+      }
+    }
+    return null;
+  }
+
+  public Integer get_player_points(List<Carta> player_hand) {
+    Integer points = 0;
+    for (Carta carta : player_hand) {
+      Integer flag = 0;
+      if (carta.get_name().equals("A")) {
+        for (Carta carta2 : player_hand) {
+          if (carta2.get_name().equals("J") || carta2.get_name().equals("Q") || carta2.get_name().equals("K")) {
+            points += 11;
+            flag = 1;
+            break;
+          }
+        }
+      }
+      if (flag == 0) {
+        points += carta.get_value();
+      }
+    }
+    return points;
+  }
 
   // public boolean checa_vez_jogador(Jogador jogador) {
   //     // retorna true se for a vez do jogador

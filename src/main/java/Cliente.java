@@ -68,18 +68,19 @@ public class Cliente {
         message += "\tOponentes: " + player.get_nickname() + " vs " + opponent.get_nickname() + "\n";
         message += "-------------------\n\n";
 
-        List<Carta> player_cards = bjm.get_player_cards(table.get_id(), player.get_nickname());
-        Integer player_points = bjm.get_player_points(table.get_id(), player.get_nickname());
+        List<Carta> player_cards = table.get_player_cards(player.get_id());
+        Integer player_points = table.get_player_points(player_cards);
         String player_status = bjm.get_player_status(table.get_id(), player.get_nickname());
         message += "-------------------\n";
         message += "Suas cartas: " + showHand(player_cards) + " (" + player_points + " pontos)\n";
         message += "Status: " + player_status + "\n";
         message += "-------------------\n\n";
 
-        List<Carta> opponent_cards = bjm.get_player_cards(table.get_id(), opponent.get_nickname());
+        List<Carta> opponent_cards = table.get_player_cards(opponent.get_id());
+        Integer opponent_points = table.get_player_points(opponent_cards);
         String opponent_status = bjm.get_player_status(table.get_id(), opponent.get_nickname());
         message += "-------------------\n";
-        message += "Cartas de " + opponent.get_nickname() + ": " + showHand(opponent_cards) + " (" + opponent_status + ")\n";
+        message += "Cartas de " + opponent.get_nickname() + ": " + showHand(opponent_cards) + " (" + opponent_points + ")\n";
         message += "Status: " + opponent_status + "\n";
         message += "-------------------\n\n";
 
@@ -148,8 +149,7 @@ public class Cliente {
         if (requestType == 1) {
             try {
                 if(player.get_cash() < 100) {
-                    Exception e = new Exception("Você não possui saldo suficiente para jogar!");
-                    throw e;
+                    throw new Exception("Você não possui saldo suficiente para jogar!");
                 }
 
                 Mesa table = bjm.join_table(player);

@@ -43,20 +43,24 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 ResultSet resultSet2 = statement.executeQuery(search_player_query);
                 if (!resultSet2.isBeforeFirst()) {
                     throw new RemoteException(" Falha ao cadastrar jogador ");
+                } else {
+                     String nickname_user = resultSet2.getString("nickname");
+                    int id = resultSet2.getInt("id");
+                    int cash = resultSet2.getInt("cash");
+                    jogador.set_nickname(nickname_user);
+                    jogador.set_cash(cash);
+                    jogador.set_id(id);
                 }
                  
             } else{
 
-                String nickname_user = resultSet.getInt("nickname");
+                String nickname_user = resultSet.getString("nickname");
                 int id = resultSet.getInt("id");
                 int cash = resultSet.getInt("cash");
+                jogador.set_nickname(nickname_user);
+                jogador.set_cash(cash);
+                jogador.set_id(id);
             }
-
-            jogador.set_nickname(nickname);
-            jogador.set_password(password);
-            jogador.set_cash(10000);
-            total_jogadores += 1;
-            jogador.set_id(total_jogadores);
             
             
         } catch (SQLException e) {

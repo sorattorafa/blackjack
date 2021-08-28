@@ -26,7 +26,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Jogador login(String nickname, String password) throws RemoteException {
         Jogador jogador = new Jogador();
-        String search_player_query = "SELECT * FROM jogador AS J WHERE (J.nickname = '" + nickname + "' AND J.password = '" + password + "');";
+        String search_player_query = "SELECT J.nickname, J.id, J.cash FROM jogador AS J WHERE J.nickname IS \"" + String.valueOf(nickname) + "\" AND J.password IS \"" + String.valueOf(password) + "\" ;";
         Connection db_connection = SQLiteConnection.connect(); 
         System.out.println(search_player_query);
         try {
@@ -41,7 +41,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 /* search for disiplina */
                 ResultSet resultSet2 = statement.executeQuery(search_player_query);
                 if (!resultSet2.isBeforeFirst()) {
-                    throw new RemoteException(" Falha ao cadastrar jogador ");
+                    throw new RemoteException(" Falha ao cadastrar jogador21312312312312312312312312 ");
                 } else {
                      String nickname_user = resultSet2.getString("nickname");
                     int id = resultSet2.getInt("id");
@@ -63,7 +63,25 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             
         } catch (SQLException e) {
             System.out.println(e);
-            throw new RemoteException("Falha ao cadastrar jogador ");
+            try {
+                Statement statement = db_connection.createStatement();
+                String create_jogador = "INSERT INTO jogador (nickname, password) VALUES (" + nickname + ", " + password + ");"; 
+                statement.execute(create_jogador);
+                /* search for disiplina */
+                ResultSet resultSet2 = statement.executeQuery(search_player_query);
+                if (!resultSet2.isBeforeFirst()) {
+                    throw new RemoteException(" Falha ao cadastrar jogador ");
+                } else {
+                     String nickname_user = resultSet2.getString("nickname");
+                    int id = resultSet2.getInt("id");
+                    int cash = resultSet2.getInt("cash");
+                    jogador.set_nickname(nickname_user);
+                    jogador.set_cash(cash);
+                    jogador.set_id(id);
+                }
+            } catch(SQLException e2) {
+
+            }
         }
         return jogador;
     }

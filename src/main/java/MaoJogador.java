@@ -4,22 +4,12 @@ import java.util.ArrayList;
 
 
 public class MaoJogador implements Serializable {
-  private Integer id;
   private Integer player_id;
   private List<Carta> player_hand;
 
   public MaoJogador(){
   
   }
-
-  public void set_id(Integer id) {
-    this.id = id;
-  }
-
-  public Integer get_id() {
-    return this.id;
-  }
-
 
   public void set_player_id(Integer player_id) {
     this.player_id =player_id;

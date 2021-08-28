@@ -5,11 +5,22 @@ public class Jogador implements Serializable {
   private String password;
   private Integer cash;
   private Integer table_id = -1;
+  private Integer id;
 
 
   public Jogador(){
   
   }
+
+  public void set_id(Integer id) {
+    this.id = id;
+  }
+
+
+  public Integer get_id(Integer id) {
+    return this.id;
+  }
+
 
   public void set_nickname(String nickname) {
     this.nickname = nickname;

@@ -10,7 +10,6 @@ public class Mesa implements Serializable {
   private Baralho baralho;
   private Integer total_cash;
   
-
   public Mesa(){
   
   }

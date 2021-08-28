@@ -49,23 +49,29 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         jogadores_disponiveis.add(jogador);
         
         Mesa mesa;
-        if (mesas.size() <= 0) {
+        if (mesas.size() > 0) {
+             for (Mesa mesa_i : mesas) {
+                    if (mesa_i.players_list() == 1) {
+                        mesa_i.add_player(jogador);
+                        MaoJogador maojogador = new MaoJogador();
+                        maojogador.set_player_id = jogador.get_id();
+                        mesa_i.add_player_hand_carta(maojogador);
+                        mesa = mesa_i;
+                    }
+            }  
+        }
+
+        if (mesa == null) {
             total_mesas += 1;
             mesa = new Mesa();
             mesa.set_id(total_mesas);
             mesa.set_total_cash(0);
             mesa.set_baralho(new Baralho());
             mesa.add_player(jogador);
-            mesa.add_player_hand_carta(new MaoJogador());
-
-        } else {
-            for (Mesa mesa_i : mesas) {
-                    if (mesa_i.players_list() == 1) {
-                        mesa_i.add_player(jogador);
-                        mesa_i.add_player_hand_carta(new MaoJogador());
-                        mesa = mesa_i;
-                    }
-            }            
+            MaoJogador maojogador = new MaoJogador();
+            maojogador.set_player_id = jogador.get_id();
+            maojogador.set_player_id(jogador.get_)
+            mesa.add_player_hand_carta();                   
         }
         
         return mesa;

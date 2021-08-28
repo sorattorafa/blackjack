@@ -99,6 +99,15 @@ public class Mesa implements Serializable {
     return points;
   }
 
+  public Integer get_player_statusCode(Integer player_id) {
+    for (StatusJogador statusjogador : this.players_status) {
+      if (statusjogador.get_player_id().equals(player_id)) {
+        return statusjogador.get_player_status();
+      }
+    }
+    return null;
+  }
+
   // public boolean checa_vez_jogador(Jogador jogador) {
   //     // retorna true se for a vez do jogador
   // }

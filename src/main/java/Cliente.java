@@ -84,6 +84,8 @@ public class Cliente {
         String message = "";
 
         Integer player_cash = player.get_cash();
+        System.out.print("player_cash: " + player_cash + ", ");
+        System.out.println("player.nickname: " + player.get_nickname());
         message += "-------------------\n";
         message += "Suas informações:\n";
         message += "\tNome: " + player.get_nickname() + "\n";
@@ -92,6 +94,8 @@ public class Cliente {
 
         Integer table_cash = table.get_total_cash();
         Jogador opponent = table.get_opponent(player.get_nickname());
+        System.out.print("table_cash: " + table_cash + ", ");
+        System.out.println("opponent.nickname: " + opponent.get_nickname());
         message += "-------------------\n";
         message += "Informações da mesa:\n";
         message += "\tApostado: " + table_cash + "\n";
@@ -100,7 +104,10 @@ public class Cliente {
 
         List<Carta> player_cards = table.get_player_cards(player.get_id());
         Integer player_points = table.get_player_points(player_cards);
-        Integer player_status = bjm.get_player_table_status(table.get_id(), player.get_nickname());
+        Integer player_status = table.get_player_statusCode(player.get_id());
+        System.out.print("player_cards: " + player_cards + ", ");
+        System.out.print("player_points: " + player_points + ", ");
+        System.out.println("player_status: " + player_status);
         message += "-------------------\n";
         message += "Suas cartas: " + showHand(player_cards) + " (" + player_points + " pontos)\n";
         message += "Status: " + statusCode_treated(player_status) + "\n";
@@ -108,7 +115,10 @@ public class Cliente {
 
         List<Carta> opponent_cards = table.get_player_cards(opponent.get_id());
         Integer opponent_points = table.get_player_points(opponent_cards);
-        Integer opponent_status = bjm.get_player_table_status(table.get_id(), opponent.get_nickname());
+        Integer opponent_status = table.get_player_statusCode(opponent.get_id());
+        System.out.print("opponent_cards: " + opponent_cards + ", ");
+        System.out.print("opponent_points: " + opponent_points + ", ");
+        System.out.println("opponent_status: " + opponent_status);
         message += "-------------------\n";
         message += "Cartas de " + opponent.get_nickname() + ": " + showHand(opponent_cards) + " (" + opponent_points + ")\n";
         message += "Status: " + statusCode_treated(opponent_status) + "\n";
@@ -131,18 +141,25 @@ public class Cliente {
 
         Thread.sleep(5000);
 
+        System.out.println("Passei");
         while (true) {
-            String message = reloadScreen(bjm, player, table);
-            clearScreen();
-            System.out.println(message);
-            
-            Integer status = bjm.get_player_table_status(table.get_id(), player.get_nickname());
-            // TODO ação do estado
-            Thread.sleep(1000);
-            table = bjm.get_estado_atual_mesa(table);
-            
-            if (true) {
-                break;
+            try {
+                String message = reloadScreen(bjm, player, table);
+                clearScreen();
+                System.out.println(message);
+                
+                Integer status = bjm.get_player_table_status(table.get_id(), player.get_nickname());
+                // TODO ação do estado
+                Thread.sleep(1000);
+                table = bjm.get_estado_atual_mesa(table);
+                
+                if (true) {
+                    break;
+                }
+                
+            } catch (Exception e) {
+                System.out.println("Erro: " + e);
+                Thread.sleep(5000);
             }
         }
 

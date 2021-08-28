@@ -53,15 +53,15 @@ public class Cliente {
         
         String message = "";
 
-        Integer player_cash = bjm.get_player_cash(player.get_nickname());
+        Integer player_cash = player.get_cash();
         message += "-------------------\n";
         message += "Suas informações:\n";
         message += "\tNome: " + player.get_nickname() + "\n";
         message += "\tSaldo: " + player_cash + "\n";
         message += "-------------------\n\n";
 
-        Integer table_cash = bjm.get_table_cash(table.get_id());
-        Jogador opponent = bjm.get_oponente(table.get_id(), player.get_nickname());
+        Integer table_cash = table.get_total_cash();
+        Jogador opponent = table.get_opponent(player.get_nickname());
         message += "-------------------\n";
         message += "Informações da mesa:\n";
         message += "\tApostado: " + table_cash + "\n";
@@ -89,6 +89,15 @@ public class Cliente {
     private static void play_game(BlackJackManagerRMI bjm, Jogador player, Mesa table) throws IOException, InterruptedException {
         // Este método irá controlar o fluxo do jogo.
         System.out.println("Jogadores emparelhados");
+        Object[]  response = bjm.submit_bet(table, player, 100);
+
+        table = (Mesa) response[0];
+        player = (Jogador) response[1];
+
+        while (table.get_total_cash().equals(100)) {
+            table = bjm.get_estado_atual_mesa(table);
+        }
+
         Thread.sleep(5000);
 
         while (true) {
@@ -138,8 +147,12 @@ public class Cliente {
 
         if (requestType == 1) {
             try {
+                if(player.get_cash() < 100) {
+                    Exception e = new Exception("Você não possui saldo suficiente para jogar!");
+                    throw e;
+                }
+
                 Mesa table = bjm.join_table(player);
-                System.out.println(table.players_list().size());
                 while (table.players_list().size() < 2) {
                     Thread.sleep(1000);
                     table = bjm.get_estado_atual_mesa(table);

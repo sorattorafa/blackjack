@@ -28,19 +28,18 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
         Connection db_connection = SQLiteConnection.connect(); 
         Jogador jogador = new Jogador();
-        String search_player_query = "SELECT * FROM jogador WHERE (nickname = " + String.valueOf(nickname) +  "AND password = " + password +  ");";
-        Statement statement = db_connection.createStatement();
-
+        String search_player_query = "SELECT * FROM jogador WHERE (nickname = " + String.valueOf(nickname) + ");";
+        
         try {
+            Statement statement = db_connection.createStatement();
              /* search for JOGADOR */
             ResultSet resultSet = statement.executeQuery(search_player_query);
             if (!resultSet.isBeforeFirst()) {
                 /* NOT FOUND jogador*/
                 
                 String create_jogador = "INSERT INTO jogador (nickname, password) VALUES (" + nickname + ", " + password + ");"; 
-                // create new jogador
-                statement.execute(create_matricula);
-                /* search for jogador */
+                statement.execute(create_jogador);
+                /* search for disiplina */
                 ResultSet resultSet2 = statement.executeQuery(search_player_query);
                 if (!resultSet2.isBeforeFirst()) {
                     throw new RemoteException(" Falha ao cadastrar jogador ");
@@ -53,9 +52,11 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 int cash = resultSet.getInt("cash");
             }
 
-            jogador.set_nickname(nickname_user);
-            jogador.set_id(id);
-            jogador.set_cash(cash);
+            jogador.set_nickname(nickname);
+            jogador.set_password(password);
+            jogador.set_cash(10000);
+            total_jogadores += 1;
+            jogador.set_id(total_jogadores);
             
             
         } catch (SQLException e) {
@@ -66,7 +67,6 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public Mesa join_table(Jogador jogador) throws RemoteException {  
-    
         Mesa mesa = new Mesa();
         if (mesas.size() > 0) {
              for (Mesa mesa_i : mesas) {
@@ -101,14 +101,17 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     }
 
     @Override
-    public Integer get_player_cash(String nickname) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    public Integer get_player_cash(Jogador jogador) throws RemoteException {
+        return jogador.get_cash();
     }
 
     @Override
     public Integer get_table_cash(Integer id_table) throws RemoteException {
-        // TODO Auto-generated method stub
+        for (Mesa mesa_i : mesas) {
+            if (mesa_i.get_id().equals(id_table)) {
+                return mesa_i.get_total_cash();
+            }
+        }
         return null;
     }
 
@@ -139,7 +142,6 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Mesa get_estado_atual_mesa(Mesa mesa) throws RemoteException {
         for (Mesa mesa_i : mesas) {
-            System.out.println(mesa_i.get_id().equals(mesa.get_id()));
             if (mesa_i.get_id().equals(mesa.get_id())) {
                 return mesa_i;
             }
@@ -163,6 +165,20 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Mesa keep_current_play(Integer id_table) throws RemoteException {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object[] submit_bet(Mesa mesa, Jogador jogador, int valor) throws RemoteException {
+        for (Mesa mesa_i : mesas) {
+            if (mesa_i.get_id().equals(mesa.get_id())) {
+                jogador.set_cash(jogador.get_cash() - valor);
+                mesa_i.set_total_cash(mesa_i.get_total_cash() + valor);
+                return new Object[] {mesa_i, jogador};
+            }
+        }
+
+
         return null;
     }
 

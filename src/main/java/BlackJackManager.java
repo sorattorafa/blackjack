@@ -18,6 +18,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     List<Jogador> jogadores_disponiveis = new ArrayList<Jogador>();
     List<Mesa> mesas = new ArrayList<Mesa>();
+    int total_mesas = 0;
 
     public BlackJackManager() throws RemoteException {
         super();
@@ -48,13 +49,24 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         jogadores_disponiveis.add(jogador);
         
         Mesa mesa;
-        if (jogador.get_table_id() != -1) {
-            mesa =
+        if (mesas.size() <= 0) {
+            total_mesas += 1;
+            mesa = new Mesa();
+            mesa.set_id(total_mesas);
+            mesa.set_total_cash(0);
+            mesa.set_baralho(new Baralho());
+            mesa.add_player(jogador);
+            mesa.add_player_hand_carta(new MaoJogador());
 
-        } else if (jogadores_disponiveis.size() >= 2) {
-            
+        } else {
+            for (Mesa mesa_i : mesas) {
+                    if (mesa_i.players_list() == 1) {
+                        mesa_i.add_player(jogador);
+                        mesa_i.add_player_hand_carta(new MaoJogador());
+                        mesa = mesa_i;
+                    }
+            }            
         }
-
         
         return mesa;
     }

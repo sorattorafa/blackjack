@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 public class Mesa implements Serializable {
   private Integer id;
-  private Integer players_list_id;
+  private List<Jogador> players_list;
   private List<MaoJogador> players_hand;
-  private Integer baralho_id;
+  private Baralho baralho;
   private Integer total_cash;
   
 
@@ -18,9 +18,35 @@ public class Mesa implements Serializable {
   public void set_id(Integer id) {
     this.id = id;
   }
-
   public Integer get_id() {
     return this.id;
+  }
+
+   public void set_baralho(Integer baralho) {
+    this.baralho = baralho;
+  }
+  public Integer get_baralho() {
+    return this.baralho;
+  }
+
+  public void set_total_cash(Integer total_cash) {
+    this.total_cash = total_cash;
+  }
+  public Integer get_total_cash() {
+    return this.total_cash;
+  }
+    
+   public void add_player(Jogador jogador) {
+    this.players_list.add(jogador);
+  }
+  public List<Jogador> players_list() {
+    return this.players_list;
+  }
+    public void add_player(MaoJogador maojogador) {
+    this.players_hand.add(maojogador);
+  }
+  public List<MaoJogador> players_hand() {
+    return this.players_hand;
   }
 
 

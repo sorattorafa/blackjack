@@ -12,7 +12,7 @@ public class MaoJogador implements Serializable {
   }
 
   public void set_player_id(Integer player_id) {
-    this.player_id =player_id;
+    this.player_id = player_id;
   }
 
   public Integer get_player_id() {

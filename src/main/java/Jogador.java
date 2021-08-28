@@ -17,7 +17,7 @@ public class Jogador implements Serializable {
   }
 
 
-  public Integer get_id(Integer id) {
+  public Integer get_id() {
     return this.id;
   }
 

@@ -19,6 +19,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     List<Jogador> jogadores_disponiveis = new ArrayList<Jogador>();
     List<Mesa> mesas = new ArrayList<Mesa>();
     int total_mesas = 0;
+    int total_jogadores = 0;
 
     public BlackJackManager() throws RemoteException {
         super();
@@ -28,18 +29,20 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Jogador login(String nickname, String password) throws RemoteException {
 
-        Connection db_connection = SQLiteConnection.connect(); 
-        try {
+        // Connection db_connection = SQLiteConnection.connect(); 
+        // try {
 
-            Statement statement = db_connection.createStatement();
+        //     // Statement statement = db_connection.createStatement();
             
-        } catch (SQLException e) {
-            // return null;
-        }
+        // } catch (SQLException e) {
+        //     // return null;
+        // }
         Jogador jogador = new Jogador();
         jogador.set_nickname(nickname);
         jogador.set_password(password);
         jogador.set_cash(0);
+        total_jogadores += 1;
+        jogador.set_id(total_jogadores);
         return jogador;
 
     }
@@ -48,32 +51,36 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     public Mesa join_table(Jogador jogador) throws RemoteException {  
         jogadores_disponiveis.add(jogador);
         
-        Mesa mesa;
+        Mesa mesa = new Mesa();
         if (mesas.size() > 0) {
              for (Mesa mesa_i : mesas) {
-                    if (mesa_i.players_list() == 1) {
+                    if (mesa_i.players_list().size() == 1) {
                         mesa_i.add_player(jogador);
                         MaoJogador maojogador = new MaoJogador();
-                        maojogador.set_player_id = jogador.get_id();
-                        mesa_i.add_player_hand_carta(maojogador);
+                        maojogador.set_player_id(jogador.get_id());
+                        mesa_i.add_mao_jogador(maojogador);
                         mesa = mesa_i;
                     }
             }  
+        } else {
+            try {
+                total_mesas += 1;
+                mesa.set_id(total_mesas);
+                mesa.set_total_cash(0);
+
+                mesa.set_baralho(new Baralho());
+                mesa.add_player(jogador);
+                MaoJogador maojogador = new MaoJogador();
+                maojogador.set_player_id(jogador.get_id());
+                mesa.add_mao_jogador(maojogador);       
+
+                mesas.add(mesa);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
         }
 
-        if (mesa == null) {
-            total_mesas += 1;
-            mesa = new Mesa();
-            mesa.set_id(total_mesas);
-            mesa.set_total_cash(0);
-            mesa.set_baralho(new Baralho());
-            mesa.add_player(jogador);
-            MaoJogador maojogador = new MaoJogador();
-            maojogador.set_player_id = jogador.get_id();
-            maojogador.set_player_id(jogador.get_)
-            mesa.add_player_hand_carta();                   
-        }
-        
         return mesa;
     }
 
@@ -115,7 +122,13 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public Mesa get_estado_atual_mesa(Mesa mesa) throws RemoteException {
-        // TODO Auto-generated method stub
+        for (Mesa mesa_i : mesas) {
+            System.out.println(mesa_i.get_id().equals(mesa.get_id()));
+            if (mesa_i.get_id().equals(mesa.get_id())) {
+                return mesa_i;
+            }
+        }
+        
         return null;
     }
 

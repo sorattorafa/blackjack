@@ -88,7 +88,9 @@ public class Cliente {
 
     private static void play_game(BlackJackManagerRMI bjm, Jogador player, Mesa table) throws IOException, InterruptedException {
         // Este método irá controlar o fluxo do jogo.
-        
+        System.out.println("Jogadores emparelhados");
+        Thread.sleep(5000);
+
         while (true) {
             String message = reloadScreen(bjm, player, table);
             Runtime.getRuntime().exec("clear");
@@ -137,6 +139,12 @@ public class Cliente {
         if (requestType == 1) {
             try {
                 Mesa table = bjm.join_table(player);
+                System.out.println(table.players_list().size());
+                while (table.players_list().size() < 2) {
+                    Thread.sleep(1000);
+                    table = bjm.get_estado_atual_mesa(table);
+                }
+
                 play_game(bjm, player, table);
             } catch (Exception e) {
                 System.out.println("Não foi possível se juntar a mesa: " + e.getMessage());

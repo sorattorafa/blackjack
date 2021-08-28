@@ -19,10 +19,12 @@ public interface BlackJackManagerRMI extends Remote {
     public Jogador login (String nickname, String password) throws RemoteException;
     public Mesa join_table (Jogador jogador) throws RemoteException;
     public Mesa get_estado_atual_mesa(Mesa mesa) throws RemoteException;
+    public Object[] submit_bet(Mesa mesa, Jogador jogador, int valor) throws RemoteException;
 
-    public Integer get_player_cash(String nickname) throws RemoteException;
+    public Integer get_player_cash(Jogador jogador) throws RemoteException;
     public Integer get_table_cash(Integer id_table) throws RemoteException;
     public Jogador get_oponente(Integer id_table, String player_nickname) throws RemoteException;
+    
     public List<Carta> get_player_cards(Integer id_table, String player_nickname) throws RemoteException;
     public String get_player_status(Integer id_table, String player_nickname) throws RemoteException;
     public Integer get_player_points(Integer id_table, String player_nickname) throws RemoteException; 

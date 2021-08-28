@@ -48,6 +48,15 @@ public class Mesa implements Serializable {
     return this.players_hand;
   }
 
+  public Jogador get_opponent(String player_nickname) {
+    for (Jogador jogador : this.players_list) {
+      if (!jogador.get_nickname().equals(player_nickname)) {
+        return jogador;
+      }
+    }
+    return null;
+  }
+
 
   // public boolean checa_vez_jogador(Jogador jogador) {
   //     // retorna true se for a vez do jogador

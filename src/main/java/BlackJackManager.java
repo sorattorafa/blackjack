@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class BlackJackManager extends UnicastRemoteObject implements BlackJackManagerRMI {
 
-    List<Jogador> jogadores_disponiveis = new ArrayList<Jogador>();
+    // List<Jogador> jogadores_disponiveis = new ArrayList<Jogador>();
     List<Mesa> mesas = new ArrayList<Mesa>();
     int total_mesas = 0;
     int total_jogadores = 0;
@@ -63,7 +63,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public Mesa join_table(Jogador jogador) throws RemoteException {  
-        jogadores_disponiveis.add(jogador);
+        // jogadores_disponiveis.add(jogador);
         
         Mesa mesa = new Mesa();
         if (mesas.size() > 0) {
@@ -99,14 +99,17 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     }
 
     @Override
-    public Integer get_player_cash(String nickname) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
+    public Integer get_player_cash(Jogador jogador) throws RemoteException {
+        return jogador.get_cash();
     }
 
     @Override
     public Integer get_table_cash(Integer id_table) throws RemoteException {
-        // TODO Auto-generated method stub
+        for (Mesa mesa_i : mesas) {
+            if (mesa_i.get_id().equals(id_table)) {
+                return mesa_i.get_total_cash();
+            }
+        }
         return null;
     }
 
@@ -137,7 +140,6 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Mesa get_estado_atual_mesa(Mesa mesa) throws RemoteException {
         for (Mesa mesa_i : mesas) {
-            System.out.println(mesa_i.get_id().equals(mesa.get_id()));
             if (mesa_i.get_id().equals(mesa.get_id())) {
                 return mesa_i;
             }
@@ -161,6 +163,20 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Mesa keep_current_play(Integer id_table) throws RemoteException {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object[] submit_bet(Mesa mesa, Jogador jogador, int valor) throws RemoteException {
+        for (Mesa mesa_i : mesas) {
+            if (mesa_i.get_id().equals(mesa.get_id())) {
+                jogador.set_cash(jogador.get_cash() - valor);
+                mesa_i.set_total_cash(mesa_i.get_total_cash() + valor);
+                return new Object[] {mesa_i, jogador};
+            }
+        }
+
+
         return null;
     }
 

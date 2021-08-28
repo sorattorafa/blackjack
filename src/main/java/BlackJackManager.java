@@ -17,6 +17,8 @@ import java.util.ArrayList;
 public class BlackJackManager extends UnicastRemoteObject implements BlackJackManagerRMI {
 
     List<Jogador> jogadores_disponiveis = new ArrayList<Jogador>();
+    List<Mesa> mesas = new ArrayList<Mesa>();
+
     public BlackJackManager() throws RemoteException {
         super();
         System.out.println("Instance of Object created with success");
@@ -37,23 +39,24 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         jogador.set_nickname(nickname);
         jogador.set_password(password);
         jogador.set_cash(0);
-        jogadores_disponiveis.add(jogador);
         return jogador;
 
     }
 
     @Override
     public Mesa join_table(Jogador jogador) throws RemoteException {  
+        jogadores_disponiveis.add(jogador);
+        
+        Mesa mesa;
+        if (jogador.get_table_id() != -1) {
+            mesa =
 
-        Connection db_connection = SQLiteConnection.connect(); 
-        try {
-   
-            Statement statement = db_connection.createStatement();
-
-        } catch (SQLException e) {
-            // return null;
+        } else if (jogadores_disponiveis.size() >= 2) {
+            
         }
-        return new Mesa();
+
+        
+        return mesa;
     }
 
     @Override

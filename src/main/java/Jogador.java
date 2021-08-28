@@ -4,6 +4,7 @@ public class Jogador implements Serializable {
   private String nickname;
   private String password;
   private Integer cash;
+  private Integer table_id = -1;
 
 
   public Jogador(){
@@ -22,6 +23,10 @@ public class Jogador implements Serializable {
     this.cash = cash;
   }
 
+  public void set_table_id(Integer table_id) {
+    this.table_id = table_id;
+  }
+
   public String get_nickname() {
     return this.nickname;
   }
@@ -32,5 +37,9 @@ public class Jogador implements Serializable {
   
   public int get_cash() {
     return this.cash;
+  }
+
+  public int get_table_id() {
+    return this.table_id;
   }
 }

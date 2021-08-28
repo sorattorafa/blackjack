@@ -32,15 +32,15 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         Connection db_connection = SQLiteConnection.connect(); 
         Jogador jogador = new Jogador();
         String search_player_query = "SELECT * FROM jogador WHERE (nickname = " + String.valueOf(nickname) + ");";
-        Statement statement = db_connection.createStatement();
-
+        
         try {
+            Statement statement = db_connection.createStatement();
              /* search for JOGADOR */
             ResultSet resultSet = statement.executeQuery(search_player_query);
             if (!resultSet.isBeforeFirst()) {
                 /* NOT FOUND */
                 String create_jogador = "INSERT INTO jogador (nickname, password) VALUES (" + nickname + ", " + password + ");"; 
-                statement.execute(create_matricula);
+                statement.execute(create_jogador);
                 /* search for disiplina */
                 ResultSet resultSet2 = statement.executeQuery(search_player_query);
                 if (!resultSet2.isBeforeFirst()) {
@@ -50,7 +50,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
             jogador.set_nickname(nickname);
             jogador.set_password(password);
-            jogador.set_cash(0);
+            jogador.set_cash(10000);
             total_jogadores += 1;
             jogador.set_id(total_jogadores);
             

@@ -296,6 +296,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
                 statement.execute(create_partida);
                 statement.execute(update_saldo_ganhador);
+                mesa.set_is_finished(true);
                 
             } catch (SQLException e){
                 System.out.print(e);
@@ -313,12 +314,13 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 statement.execute(update_saldo_jogador);
                 statement.execute(update_saldo_oponent);
                 statement.execute(create_partida);
-
+                mesa.set_is_finished(true);
             } catch (SQLException e){
                 System.out.print(e);
                 throw new RemoteException(" Falha ao salvar os dados da partida no banco de dados");
             }
         }
+
 
     }
 
@@ -344,7 +346,13 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         return jogador;
     }
 
-    private void remove_table(Mesa table) {
-        mesas.remove(table);
+    @Override
+    public void finish_table(Mesa mesa) throws RemoteException {
+        if(mesas.isEmpty()) return;
+        else if(!mesas.contains(mesa)) return;
+        else if(mesa.get_is_finished()){
+            mesas.remove(mesa);
+        }
+
     }
 }

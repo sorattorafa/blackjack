@@ -8,7 +8,7 @@ public class Mesa implements Serializable {
   private List<Jogador> players_list = new ArrayList<Jogador>();
   private List<MaoJogador> players_hand = new ArrayList<MaoJogador>();
   private List<StatusJogador> players_status = new ArrayList<StatusJogador>();
-
+  private boolean is_finished = false;
   private Baralho baralho;
   private Integer total_cash;
   
@@ -23,6 +23,13 @@ public class Mesa implements Serializable {
     return this.id;
   }
 
+
+  public void set_is_finished(boolean is_finished) {
+    this.is_finished = is_finished;
+  }
+  public boolean get_is_finished() {
+    return this.is_finished;
+  }
    public void set_baralho(Baralho baralho) {
     this.baralho = baralho;
   }

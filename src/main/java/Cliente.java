@@ -179,7 +179,7 @@ public class Cliente {
 
         System.out.print("Sair para o Lobby (1): ");
         Integer decision = Integer.parseInt(new Scanner(System.in).nextLine());
-
+        bjm.finish_table(table);
         enter_game(bjm, player);
     }
 

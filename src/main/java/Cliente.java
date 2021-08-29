@@ -177,23 +177,10 @@ public class Cliente {
             }
         }
 
-        System.out.print("Deseja Revanche (1) ou Sair para o Lobby (2): ");
+        System.out.print("Sair para o Lobby (1): ");
         Integer decision = Integer.parseInt(new Scanner(System.in).nextLine());
 
-        if (decision == 1) {
-            bjm.keep_playing(table.get_id(), player.get_nickname());
-            Thread.sleep(10000);
-            try {
-                Mesa new_table = bjm.keep_current_play(table.get_id());
-                play_game(bjm, player, new_table);
-            } catch (Exception e) {
-                System.out.println("O oponente desistiu! Você está sendo redirecionado para o lobby...");
-                Thread.sleep(1000);
-                enter_game(bjm, player);
-            }
-        } else if (decision == 2) {
-            enter_game(bjm, player);
-        }
+        enter_game(bjm, player);
     }
 
     public static void enter_game(BlackJackManagerRMI bjm, Jogador player) throws IOException, InterruptedException {

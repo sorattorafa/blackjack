@@ -177,24 +177,6 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     }
 
     @Override
-    public Integer get_player_table_status(Integer id_table, String player_nickname) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void keep_playing(Integer id_table, String player_nickname) throws RemoteException {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public Mesa keep_current_play(Integer id_table) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Object[] submit_bet(Mesa mesa, Jogador jogador, int valor) throws RemoteException {
         for (Mesa mesa_i : mesas) {
             if (mesa_i.get_id().equals(mesa.get_id())) {
@@ -314,7 +296,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
                 statement.execute(create_partida);
                 statement.execute(update_saldo_ganhador);
-    
+                
             } catch (SQLException e){
                 System.out.print(e);
                 throw new RemoteException(" Falha ao salvar os dados da partida no banco de dados");
@@ -331,11 +313,11 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 statement.execute(update_saldo_jogador);
                 statement.execute(update_saldo_oponent);
                 statement.execute(create_partida);
+
             } catch (SQLException e){
                 System.out.print(e);
                 throw new RemoteException(" Falha ao salvar os dados da partida no banco de dados");
             }
-
         }
 
     }
@@ -362,5 +344,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         return jogador;
     }
 
-
+    private void remove_table(Mesa table) {
+        mesas.remove(table);
+    }
 }

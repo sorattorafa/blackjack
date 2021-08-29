@@ -142,15 +142,15 @@ public class Cliente {
                 System.out.println(message);
                 
                 table = bjm.get_estado_atual_mesa(table);
-                player = bjm.get_estado_atual_jogador(player);
+                player = bjm.update_player_cash(player);
                 Integer status = table.get_player_statusCode(player.get_id());
                 if (status.equals(1)) {
                     System.out.println("Parabéns, você venceu $ " + table.get_total_cash());
-                    player = bjm.get_estado_atual_jogador(player);
+                    player = bjm.update_player_cash(player);
                     break;
                 } else if (status.equals(2)) {
                     System.out.println("Que pena, você perdeu $ " + table.get_total_cash() / 2);
-                    player = bjm.get_estado_atual_jogador(player);
+                    player = bjm.update_player_cash(player);
                     break;
                 } else if (status.equals(3)) {
                     System.out.println("Aguardando seu oponente...");
@@ -163,13 +163,13 @@ public class Cliente {
                     bjm.player_decision(player, table, requestType);
                 } else if (status.equals(6)) {
                     System.out.println("Ninguém ganhou, ninguém perdeu... Empate!");
-                    player = bjm.get_estado_atual_jogador(player);
+                    player = bjm.update_player_cash(player);
                     break;
                 }
 
                 Thread.sleep(1000);
                 table = bjm.get_estado_atual_mesa(table);
-                player = bjm.get_estado_atual_jogador(player);
+                player = bjm.update_player_cash(player);
                 
             } catch (Exception e) {
                 System.out.println("Erro: " + e);

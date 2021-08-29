@@ -28,7 +28,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     public Jogador login(String nickname, String password) throws RemoteException {
         Jogador jogador = new Jogador();
         String search_player_query = "SELECT J.nickname, J.id, J.cash FROM jogador AS J WHERE J.nickname IS \"" + String.valueOf(nickname) + "\" AND J.password IS \"" + String.valueOf(password) + "\";";
-        System.out.println(search_player_query);
+        
         try {
             Statement statement = db_connection.createStatement();
              /* search for JOGADOR */
@@ -336,10 +336,24 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     }
 
     @Override
-    public Jogador get_estado_atual_jogador(Jogador jogador) throws RemoteException {
-        // TODO - Pegar cash do banco de dados rafael
-        jogador.set_cash(10000);
+    public Jogador update_player_cash(Jogador jogador) throws RemoteException {
+        String search_player_query = "SELECT cash FROM jogador WHERE nickname IS \"" + jogador.get_nickname() + "\";";
+        try {
+            Statement statement = db_connection.createStatement();
+            statement.executeQuery(search_player_query);
+            
+            /* search for disiplina */
+            ResultSet resultSet = statement.executeQuery(search_player_query);
+            if (!resultSet.isBeforeFirst()) {
+                throw new RemoteException(" 404 - jogador not  found ");
+            } else {
+                Integer cash = resultSet.getInt("cash");
+                jogador.set_cash(cash);
+            }
 
+        } catch(SQLException e) {
+            throw new RemoteException(" 404 - jogador not  found ");
+        }
         return jogador;
     }
 

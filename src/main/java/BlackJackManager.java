@@ -209,7 +209,53 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public void player_decision(Jogador jogador, Mesa mesa, Integer requestType) throws RemoteException {
         
+        for (Mesa mesa_i : mesas) {
+            if (mesa_i.get_id().equals(mesa.get_id())) {
+                mesa = mesa_i;
+                break;
+            }
+        }
+
+        Jogador oponent = mesa.get_opponent(jogador.get_nickname());
+        StatusJogador statusjogador = mesa.get_players_status(jogador.get_id());
+        StatusJogador statusjogador_oponente = mesa.get_players_status(oponent.get_id());
+
+        if (requestType == 1) {
+            statusjogador.set_player_status(4);
+
+            if (statusjogador_oponente.get_player_status() == 3) statusjogador_oponente.set_player_status(5);
+            else if (statusjogador_oponente.get_player_status() == 4) {
+                List<Carta> player_cards = mesa.get_player_cards(jogador.get_id());
+                Integer player_points = mesa.get_player_points(player_cards);
+
+                List<Carta> oppenent_cards = mesa.get_player_cards(oponent.get_id());
+                Integer oppenent_points = mesa.get_player_points(oppenent_cards);
+
+                if (player_points == oppenent_points) {
+                    statusjogador.set_player_status(6);
+                    statusjogador_oponente.set_player_status(6);
+
+                    // TODO - Lidar com o vencedor e ganhador no banco
+
+                } else if (player_points > oppenent_points) {
+                    statusjogador.set_player_status(1);
+                    statusjogador_oponente.set_player_status(2);
+
+                    // TODO - Lidar com o vencedor e ganhador no banco
+
+                } else {
+                    statusjogador.set_player_status(2);
+                    statusjogador_oponente.set_player_status(1);
+
+                    // TODO - Lidar com o vencedor e ganhador no banco
+                }
+            }
+
+        } else if (requestType == 2) {
         
+        }
+
+
     }
 
 

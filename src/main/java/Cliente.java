@@ -72,6 +72,9 @@ public class Cliente {
             case 5:
                 message = "Sua vez";
                 break;
+            case 6:
+                message = "Empate!";
+                break;
         }
 
         return message;
@@ -155,9 +158,13 @@ public class Cliente {
                     Integer requestType = Integer.parseInt(new Scanner(System.in).nextLine());
 
                     bjm.player_decision(player, table, requestType);
+                } else if (status.equals(6)) {
+                    System.out.println("Ninguém ganhou, ninguém perdeu... Empate!");
+                    break;
                 }
 
                 Thread.sleep(1000);
+                table = bjm.get_estado_atual_mesa(table);
                 
             } catch (Exception e) {
                 System.out.println("Erro: " + e);

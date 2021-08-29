@@ -277,6 +277,35 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 }
             }
         }
+        Integer perdedor_id = null;
+        Integer ganhador_id = null;  
+        if(statusjogador.get_player_status() == 1 && statusjogador_oponente.get_player_status() == 2){
+            ganhador_id = jogador.get_id();
+            perdedor_id =  oponent.get_id();
+
+        } else if (statusjogador.get_player_status() == 2 && statusjogador_oponente.get_player_status() == 1) {
+            ganhador_id = oponent.get_id();
+            perdedor_id =  jogador.get_id();
+        }
+
+        if(perdedor_id != null && ganhador_id != null){
+
+            try {
+
+                Statement statement = db_connection.createStatement();
+                String create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
+                String update_saldo_ganhador = "UPDATE jogador SET cash = " + mesa.get_total_cash()  + " WHERE (id = " + ganhador_id +");";
+                String update_saldo_perdedor = "UPDATE jogador SET cash = " + mesa.get_total_cash()  + " WHERE (id = " + perdedor_id +");";
+    
+                statement.execute(create_partida);
+                statement.execute(update_saldo_ganhador);
+                statement.execute(update_saldo_perdedor);
+    
+            } catch (SQLException e){
+                System.out.print(e);
+                throw new RemoteException(" Falha ao salvar os dados da partida no banco de dados");
+            }
+        }
 
 
     }

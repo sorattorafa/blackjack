@@ -81,6 +81,15 @@ public class Mesa implements Serializable {
       return null;
   }
 
+  public MaoJogador get_mao_jogador(Integer player_id){
+    for (MaoJogador maojogador : this.players_hand) {
+      if (maojogador.get_player_id().equals(player_id)) {
+        return maojogador;
+      }
+    }
+    return null;
+}
+
   List<Carta> get_player_cards(Integer player_id) {       
     for (MaoJogador maojogador : this.players_hand) {
       if (maojogador.get_player_id().equals(player_id)) {

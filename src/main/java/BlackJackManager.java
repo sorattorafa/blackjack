@@ -89,9 +89,11 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     @Override
     public Mesa join_table(Jogador jogador) throws RemoteException {  
         Mesa mesa = new Mesa();
+        boolean found = false;
         if (mesas.size() > 0) {
              for (Mesa mesa_i : mesas) {
                     if (mesa_i.players_list().size() == 1) {
+                        found = true;
                         mesa_i.add_player(jogador);
                         Integer player_id = jogador.get_id();
                         MaoJogador maojogador = new MaoJogador();
@@ -119,9 +121,13 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                         mesa_i.add_mao_jogador(maojogador);
                         mesa_i.add_player_status(statusjogador);
                         mesa = mesa_i;
+                        break;
                     }
             }  
-        } else {
+        } 
+
+        if (!found) {
+            System.out.println("Creating new table");
             try {
          
                 Integer player_id = jogador.get_id();
@@ -149,15 +155,11 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
                 mesa.add_mao_jogador(maojogador);
                 mesa.add_player_status(statusjogador); 
-                
-                                
-
 
                 mesas.add(mesa);
             } catch (Exception e) {
                 System.out.println(e);
             }
-
         }
 
         return mesa;
@@ -220,15 +222,16 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         StatusJogador statusjogador = mesa.get_players_status(jogador.get_id());
         StatusJogador statusjogador_oponente = mesa.get_players_status(oponent.get_id());
 
+        List<Carta> player_cards = mesa.get_player_cards(jogador.get_id());
+        List<Carta> oppenent_cards = mesa.get_player_cards(oponent.get_id());
+
         if (requestType == 1) {
             statusjogador.set_player_status(4);
 
             if (statusjogador_oponente.get_player_status() == 3) statusjogador_oponente.set_player_status(5);
             else if (statusjogador_oponente.get_player_status() == 4) {
-                List<Carta> player_cards = mesa.get_player_cards(jogador.get_id());
                 Integer player_points = mesa.get_player_points(player_cards);
 
-                List<Carta> oppenent_cards = mesa.get_player_cards(oponent.get_id());
                 Integer oppenent_points = mesa.get_player_points(oppenent_cards);
 
                 if (player_points == oppenent_points) {
@@ -252,7 +255,27 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             }
 
         } else if (requestType == 2) {
-        
+            MaoJogador maojogador = mesa.get_mao_jogador(jogador.get_id());
+
+            Baralho baralho = mesa.get_baralho();
+            Carta player_card = baralho.draw_card();
+            maojogador.add_player_hand_carta(player_card);
+
+            Integer player_points = mesa.get_player_points(player_cards);
+
+            if (player_points > 21) {
+                statusjogador.set_player_status(2);
+                statusjogador_oponente.set_player_status(1);
+
+                // TODO - Lidar com o vencedor e ganhador no banco
+            } else {
+                if (statusjogador_oponente.get_player_status() == 3) {
+                    statusjogador.set_player_status(3);
+                    statusjogador_oponente.set_player_status(5);
+                } else if (statusjogador_oponente.get_player_status() == 4) {
+                    statusjogador.set_player_status(5);
+                }
+            }
         }
 
 

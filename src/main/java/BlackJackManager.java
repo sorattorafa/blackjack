@@ -226,7 +226,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             }
         }
 
-        Jogador oponent = mesa.get_opponent(jogador.get_nickname());
+        Jogador oponent = update_player_cash(mesa.get_opponent(jogador.get_nickname()));
         StatusJogador statusjogador = mesa.get_players_status(jogador.get_id());
         StatusJogador statusjogador_oponente = mesa.get_players_status(oponent.get_id());
 

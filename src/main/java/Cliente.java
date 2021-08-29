@@ -133,7 +133,7 @@ public class Cliente {
             table = bjm.get_estado_atual_mesa(table);
         }
 
-        Thread.sleep(5000);
+        Thread.sleep(2500);
 
         while (true) {
             try {

@@ -213,6 +213,7 @@ public class Cliente {
                 }
 
                 Mesa table = bjm.join_table(player);
+                System.out.println("Procurando por jogadores. Aguarde...");
                 while (table.players_list().size() < 2) {
                     Thread.sleep(1000);
                     table = bjm.get_estado_atual_mesa(table);

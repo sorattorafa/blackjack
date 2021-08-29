@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class MaoJogador implements Serializable {
   private Integer player_id;
-  private List<Carta> player_hand;
+  private List<Carta> player_hand = new ArrayList<Carta>();
 
   public MaoJogador(){
   

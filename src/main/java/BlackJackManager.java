@@ -102,6 +102,20 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
                         maojogador.set_player_id(player_id);
                         
+                        /* 1a carta do player que entrou na mesa */  
+                        Baralho baralho = mesa_i.get_baralho();
+                        Carta player_card = baralho.draw_card();
+                        maojogador.add_player_hand_carta(player_card);
+
+                        /* 2a carta do player que iniciou a mesa */
+                        MaoJogador maooponente = mesa_i.get_opponent_hand(jogador.get_nickname());
+                        player_card = baralho.draw_card();
+                        maooponente.add_player_hand_carta(player_card);
+
+                        /* 2a carta do player que entrou na mesa */ 
+                        player_card = baralho.draw_card();
+                        maojogador.add_player_hand_carta(player_card);
+                        
                         mesa_i.add_mao_jogador(maojogador);
                         mesa_i.add_player_status(statusjogador);
                         mesa = mesa_i;
@@ -127,8 +141,18 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 mesa.set_total_cash(0);
                 mesa.set_baralho(new Baralho());
                 mesa.add_player(jogador);
+                
+                /* 1a carta do player que iniciou a mesa */ 
+                Baralho baralho = mesa.get_baralho();
+                Carta player_card = baralho.draw_card();
+                maojogador.add_player_hand_carta(player_card);
+
                 mesa.add_mao_jogador(maojogador);
-                mesa.add_player_status(statusjogador);       
+                mesa.add_player_status(statusjogador); 
+                
+                                
+
+
                 mesas.add(mesa);
             } catch (Exception e) {
                 System.out.println(e);
@@ -137,45 +161,6 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         }
 
         return mesa;
-    }
-
-    @Override
-    public Integer get_player_cash(Jogador jogador) throws RemoteException {
-        return jogador.get_cash();
-    }
-
-    @Override
-    public Integer get_table_cash(Integer id_table) throws RemoteException {
-        for (Mesa mesa_i : mesas) {
-            if (mesa_i.get_id().equals(id_table)) {
-                return mesa_i.get_total_cash();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Jogador get_oponente(Integer id_table, String player_nickname) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<Carta> get_player_cards(Integer id_table, String player_nickname) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String get_player_status(Integer id_table, String player_nickname) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Integer get_player_points(Integer id_table, String player_nickname) throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
@@ -219,6 +204,12 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
 
         return null;
+    }
+
+    @Override
+    public void player_decision(Jogador jogador, Mesa mesa, Integer requestType) throws RemoteException {
+        
+        
     }
 
 

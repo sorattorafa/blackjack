@@ -70,6 +70,17 @@ public class Mesa implements Serializable {
     return null;
   }
 
+  public MaoJogador get_opponent_hand(String player_nickname){
+      Jogador opponent = this.get_opponent(player_nickname);
+
+      for (MaoJogador maojogador : this.players_hand) {
+        if (maojogador.get_player_id().equals(opponent.get_id())) {
+          return maojogador;
+        }
+      }
+      return null;
+  }
+
   List<Carta> get_player_cards(Integer player_id) {       
     for (MaoJogador maojogador : this.players_hand) {
       if (maojogador.get_player_id().equals(player_id)) {
@@ -107,21 +118,4 @@ public class Mesa implements Serializable {
     }
     return null;
   }
-
-  // public boolean checa_vez_jogador(Jogador jogador) {
-  //     // retorna true se for a vez do jogador
-  // }
-
-  // public int get_acao_jogador(Jogador jogador, Integer aposta) {
-  //     //
-  // }
-
-  // public int get_aposta_jogador(Jogador jogador, Integer aposta) {
-  //     //
-  // }
-
-  // public int duplicador_aposta_jogador(Jogador jogador, Integer aposta) {
-  //     //
-  // }
-  
 }

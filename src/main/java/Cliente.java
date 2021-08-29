@@ -43,7 +43,7 @@ public class Cliente {
         String message = "";
         for (int i = 0; i < cartas.size(); i++) {
             if (i <= cartas.size() - 1) {
-                message += cartas.get(i).get_name() + cartas.get(i).get_symbol();
+                message += cartas.get(i).get_name() + cartas.get(i).get_symbol() + " ";
             } else {
                 message += cartas.get(i).get_name() + cartas.get(i).get_symbol() + ", ";
             }
@@ -84,8 +84,6 @@ public class Cliente {
         String message = "";
 
         Integer player_cash = player.get_cash();
-        System.out.print("player_cash: " + player_cash + ", ");
-        System.out.println("player.nickname: " + player.get_nickname());
         message += "-------------------\n";
         message += "Suas informações:\n";
         message += "\tNome: " + player.get_nickname() + "\n";
@@ -94,8 +92,6 @@ public class Cliente {
 
         Integer table_cash = table.get_total_cash();
         Jogador opponent = table.get_opponent(player.get_nickname());
-        System.out.print("table_cash: " + table_cash + ", ");
-        System.out.println("opponent.nickname: " + opponent.get_nickname());
         message += "-------------------\n";
         message += "Informações da mesa:\n";
         message += "\tApostado: " + table_cash + "\n";
@@ -105,9 +101,6 @@ public class Cliente {
         List<Carta> player_cards = table.get_player_cards(player.get_id());
         Integer player_points = table.get_player_points(player_cards);
         Integer player_status = table.get_player_statusCode(player.get_id());
-        System.out.print("player_cards: " + player_cards + ", ");
-        System.out.print("player_points: " + player_points + ", ");
-        System.out.println("player_status: " + player_status);
         message += "-------------------\n";
         message += "Suas cartas: " + showHand(player_cards) + " (" + player_points + " pontos)\n";
         message += "Status: " + statusCode_treated(player_status) + "\n";
@@ -116,11 +109,8 @@ public class Cliente {
         List<Carta> opponent_cards = table.get_player_cards(opponent.get_id());
         Integer opponent_points = table.get_player_points(opponent_cards);
         Integer opponent_status = table.get_player_statusCode(opponent.get_id());
-        System.out.print("opponent_cards: " + opponent_cards + ", ");
-        System.out.print("opponent_points: " + opponent_points + ", ");
-        System.out.println("opponent_status: " + opponent_status);
         message += "-------------------\n";
-        message += "Cartas de " + opponent.get_nickname() + ": " + showHand(opponent_cards) + " (" + opponent_points + ")\n";
+        message += "Cartas de " + opponent.get_nickname() + ": " + showHand(opponent_cards) + " (" + opponent_points + " pontos)\n";
         message += "Status: " + statusCode_treated(opponent_status) + "\n";
         message += "-------------------\n\n";
 
@@ -130,6 +120,7 @@ public class Cliente {
     private static void play_game(BlackJackManagerRMI bjm, Jogador player, Mesa table) throws IOException, InterruptedException {
         // Este método irá controlar o fluxo do jogo.
         System.out.println("Jogadores emparelhados");
+        System.out.println("Embaralhando as cartas, aguarde...");
         Object[]  response = bjm.submit_bet(table, player, 100);
 
         table = (Mesa) response[0];
@@ -141,21 +132,32 @@ public class Cliente {
 
         Thread.sleep(5000);
 
-        System.out.println("Passei");
         while (true) {
             try {
                 String message = reloadScreen(bjm, player, table);
                 clearScreen();
                 System.out.println(message);
                 
-                Integer status = bjm.get_player_table_status(table.get_id(), player.get_nickname());
-                // TODO ação do estado
-                Thread.sleep(1000);
                 table = bjm.get_estado_atual_mesa(table);
-                
-                if (true) {
+                Integer status = table.get_player_statusCode(player.get_id());
+                if (status.equals(1)) {
+                    System.out.println("Parabéns, você venceu $ " + table.get_total_cash());
                     break;
+                } else if (status.equals(2)) {
+                    System.out.println("Que pena, você perdeu $ " + table.get_total_cash() / 2);
+                    break;
+                } else if (status.equals(3)) {
+                    System.out.println("Aguardando seu oponente...");
+                } else if (status.equals(4)) {
+                    System.out.println("Aguardando seu oponente terminar...");
+                } else if (status.equals(5)) {
+                    System.out.print("Você deseja Parar (1) ou Continuar (2): ");
+                    Integer requestType = Integer.parseInt(new Scanner(System.in).nextLine());
+
+                    bjm.player_decision(player, table, requestType);
                 }
+
+                Thread.sleep(1000);
                 
             } catch (Exception e) {
                 System.out.println("Erro: " + e);

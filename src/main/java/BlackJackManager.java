@@ -224,6 +224,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
         List<Carta> player_cards = mesa.get_player_cards(jogador.get_id());
         List<Carta> oppenent_cards = mesa.get_player_cards(oponent.get_id());
+        boolean empate = false;
 
         if (requestType == 1) {
             statusjogador.set_player_status(4);
@@ -237,7 +238,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 if (player_points == oppenent_points) {
                     statusjogador.set_player_status(6);
                     statusjogador_oponente.set_player_status(6);
-
+                    empate = true;
                     // TODO - Lidar com o vencedor e ganhador no banco
 
                 } else if (player_points > oppenent_points) {
@@ -277,8 +278,10 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 }
             }
         }
+        
         Integer perdedor_id = null;
-        Integer ganhador_id = null;  
+        Integer ganhador_id = null;
+  
         if(statusjogador.get_player_status() == 1 && statusjogador_oponente.get_player_status() == 2){
             ganhador_id = jogador.get_id();
             perdedor_id =  oponent.get_id();
@@ -288,15 +291,32 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             perdedor_id =  jogador.get_id();
         }
 
-        if(perdedor_id != null && ganhador_id != null){
+        if(perdedor_id != null && ganhador_id != null) {
 
             try {
 
+                String create_partida;
+                String update_saldo_ganhador;
+                String update_saldo_perdedor;
                 Statement statement = db_connection.createStatement();
-                String create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
-                String update_saldo_ganhador = "UPDATE jogador SET cash = " + mesa.get_total_cash()  + " WHERE (id = " + ganhador_id +");";
-                String update_saldo_perdedor = "UPDATE jogador SET cash = " + mesa.get_total_cash()  + " WHERE (id = " + perdedor_id +");";
-    
+
+                if ( perdedor_id == oponent.get_id() && ganhador_id == jogador.get_id()) {
+                    Integer saldo_perdedor = oponent.get_cash() - (mesa.get_total_cash()/ 2);
+                    Integer saldo_ganhador = jogador.get_cash() + mesa.get_total_cash();
+
+                    create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
+                    update_saldo_ganhador = "UPDATE jogador SET cash = " + saldo_ganhador + " WHERE (id = " + ganhador_id +");";
+                    update_saldo_perdedor = "UPDATE jogador SET cash = " + saldo_perdedor  + " WHERE (id = " + perdedor_id +");";
+                    
+                } else {
+                    Integer saldo_ganhador = oponent.get_cash() - (mesa.get_total_cash()/ 2);
+                    Integer saldo_perdedor = jogador.get_cash() + mesa.get_total_cash();
+
+                    create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
+                    update_saldo_ganhador = "UPDATE jogador SET cash = " + saldo_ganhador + " WHERE (id = " + ganhador_id +");";
+                    update_saldo_perdedor = "UPDATE jogador SET cash = " + saldo_perdedor  + " WHERE (id = " + perdedor_id +");";
+
+                }
                 statement.execute(create_partida);
                 statement.execute(update_saldo_ganhador);
                 statement.execute(update_saldo_perdedor);
@@ -305,8 +325,18 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 System.out.print(e);
                 throw new RemoteException(" Falha ao salvar os dados da partida no banco de dados");
             }
-        }
+        } else if(empate){
+         
+            try {
+                String create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + jogador.get_id() + "', '" + jogador.get_id() + "', '" +  mesa.get_total_cash() + "');";
+                Statement statement = db_connection.createStatement();
+                statement.execute(create_partida);
+            } catch (SQLException e){
+                System.out.print(e);
+                throw new RemoteException(" Falha ao salvar os dados da partida no banco de dados");
+            }
 
+        }
 
     }
 

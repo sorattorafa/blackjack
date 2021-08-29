@@ -295,28 +295,22 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         }
 
         if(perdedor_id != null && ganhador_id != null) {
-            System.out.print(ganhador_id + "ganhador id");
+
             try {
 
-                String create_partida;
-                String update_saldo_ganhador;
                 Statement statement = db_connection.createStatement();
+                Integer saldo_ganhador;
 
                 if ( perdedor_id == oponent.get_id() && ganhador_id == jogador.get_id()) {
-                    Integer saldo_ganhador = jogador.get_cash() + mesa.get_total_cash();
-                    System.out.print(mesa.get_total_cash() + "esse é o saldo da mesa ");
-                    
-                    create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
-                    update_saldo_ganhador = "UPDATE jogador SET cash = " + saldo_ganhador + " WHERE (id = " + ganhador_id +");";
-                    
+                    saldo_ganhador = jogador.get_cash() + mesa.get_total_cash();
                 } else {
-                    Integer saldo_ganhador = oponent.get_cash() - mesa.get_total_cash();
-                    System.out.print(saldo_ganhador + "esse é o saldo do ganhador ");
-
-                    create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
-                    update_saldo_ganhador = "UPDATE jogador SET cash = " + saldo_ganhador + " WHERE (id = " + ganhador_id +");";
-
+                    saldo_ganhador = oponent.get_cash() + mesa.get_total_cash();
                 }
+
+                System.out.print(saldo_ganhador + " = saldo ganhador, " + jogador.get_cash() + " = jogador_get_cash, " + oponent.get_cash() + " oponent_cash ," + ganhador_id + " = ganhador_id" );
+
+                String update_saldo_ganhador = "UPDATE jogador SET cash = " + saldo_ganhador + " WHERE (id = " + ganhador_id +");";
+                String create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
 
                 statement.execute(create_partida);
                 statement.execute(update_saldo_ganhador);

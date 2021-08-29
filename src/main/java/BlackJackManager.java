@@ -26,7 +26,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public Jogador login(String nickname, String password) throws RemoteException {
-        Jogador jogador = new Jogador();
+        Jogador jogador;
         String search_player_query = "SELECT J.nickname, J.id, J.cash FROM jogador AS J WHERE J.nickname IS \"" + String.valueOf(nickname) + "\" AND J.password IS \"" + String.valueOf(password) + "\";";
         
         try {
@@ -43,21 +43,17 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 if (!resultSet2.isBeforeFirst()) {
                     throw new RemoteException(" Falha ao cadastrar jogador");
                 } else {
-                     String nickname_user = resultSet2.getString("nickname");
+                    String nickname_user = resultSet2.getString("nickname");
                     int id = resultSet2.getInt("id");
                     int cash = resultSet2.getInt("cash");
-                    jogador.set_nickname(nickname_user);
-                    jogador.set_cash(cash);
-                    jogador.set_id(id);
+                    jogador = new Jogador(nickname_user, id, cash);
                 }
                  
             } else{
                 String nickname_user = resultSet.getString("nickname");
                 int id = resultSet.getInt("id");
                 int cash = resultSet.getInt("cash");
-                jogador.set_nickname(nickname_user);
-                jogador.set_cash(cash);
-                jogador.set_id(id);
+                jogador = new Jogador(nickname_user, id, cash);
             }
             
             
@@ -75,9 +71,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                      String nickname_user = resultSet2.getString("nickname");
                     int id = resultSet2.getInt("id");
                     int cash = resultSet2.getInt("cash");
-                    jogador.set_nickname(nickname_user);
-                    jogador.set_cash(cash);
-                    jogador.set_id(id);
+                    jogador = new Jogador(nickname_user, id, cash);
                 }
             } catch(SQLException e2) {
                 throw new RemoteException(" Falha ao cadastrar jogador");

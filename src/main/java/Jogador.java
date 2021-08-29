@@ -9,7 +9,14 @@ public class Jogador implements Serializable {
 
 
   public Jogador(){
-  
+    
+  }
+
+
+  public Jogador(String nickname_user, Integer id, Integer cash){
+    this.nickname = nickname_user;
+    this.id = id;
+    this.cash = cash;
   }
 
   public void set_id(Integer id) {

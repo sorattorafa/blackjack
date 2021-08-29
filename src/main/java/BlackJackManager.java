@@ -239,19 +239,15 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                     statusjogador.set_player_status(6);
                     statusjogador_oponente.set_player_status(6);
                     empate = true;
-                    // TODO - Lidar com o vencedor e ganhador no banco
 
                 } else if (player_points > oppenent_points) {
                     statusjogador.set_player_status(1);
                     statusjogador_oponente.set_player_status(2);
 
-                    // TODO - Lidar com o vencedor e ganhador no banco
-
                 } else {
                     statusjogador.set_player_status(2);
                     statusjogador_oponente.set_player_status(1);
 
-                    // TODO - Lidar com o vencedor e ganhador no banco
                 }
             }
 
@@ -268,7 +264,6 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 statusjogador.set_player_status(2);
                 statusjogador_oponente.set_player_status(1);
 
-                // TODO - Lidar com o vencedor e ganhador no banco
             } else {
                 if (statusjogador_oponente.get_player_status() == 3) {
                     statusjogador.set_player_status(3);
@@ -342,7 +337,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public Jogador get_estado_atual_jogador(Jogador jogador) throws RemoteException {
-        // TODO - Pegar cash do banco de dados
+        // TODO - Pegar cash do banco de dados rafael
         jogador.set_cash(10000);
 
         return jogador;

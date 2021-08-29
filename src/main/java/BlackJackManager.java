@@ -340,5 +340,13 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     }
 
+    @Override
+    public Jogador get_estado_atual_jogador(Jogador jogador) throws RemoteException {
+        // TODO - Pegar cash do banco de dados
+        jogador.set_cash(10000);
+
+        return jogador;
+    }
+
 
 }

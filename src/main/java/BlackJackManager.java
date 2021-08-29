@@ -295,7 +295,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
         }
 
         if(perdedor_id != null && ganhador_id != null) {
-
+            System.out.print(ganhador_id + "ganhador id");
             try {
 
                 String create_partida;
@@ -304,21 +304,18 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
                 if ( perdedor_id == oponent.get_id() && ganhador_id == jogador.get_id()) {
                     Integer saldo_ganhador = jogador.get_cash() + mesa.get_total_cash();
-
                     create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
                     update_saldo_ganhador = "UPDATE jogador SET cash = " + saldo_ganhador + " WHERE (id = " + ganhador_id +");";
                     
                 } else {
                     Integer saldo_ganhador = oponent.get_cash() - (mesa.get_total_cash()/ 2);
-
                     create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + perdedor_id + "', '" + ganhador_id + "', '" +  mesa.get_total_cash() + "');";
                     update_saldo_ganhador = "UPDATE jogador SET cash = " + saldo_ganhador + " WHERE (id = " + ganhador_id +");";
 
                 }
-                
+
                 statement.execute(create_partida);
                 statement.execute(update_saldo_ganhador);
-
     
             } catch (SQLException e){
                 System.out.print(e);
@@ -329,11 +326,18 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
             try {
                 String create_partida = "INSERT INTO partida (perdedor_id, ganhador_id, total_cash) VALUES ( '" + jogador.get_id() + "', '" + jogador.get_id() + "', '" +  mesa.get_total_cash() + "');";
                 Statement statement = db_connection.createStatement();
+
+                String update_saldo_jogador  = "UPDATE jogador SET cash = " + (jogador.get_cash() + mesa.get_total_cash()/2)  + " WHERE (id = " + jogador.get_id() +");";
+                String update_saldo_oponent  = "UPDATE jogador SET cash = " + (oponent.get_cash() + mesa.get_total_cash()/2)  + " WHERE (id = " + oponent.get_id() +");";
+
+                statement.execute(update_saldo_jogador);
+                statement.execute(update_saldo_oponent);
                 statement.execute(create_partida);
             } catch (SQLException e){
                 System.out.print(e);
                 throw new RemoteException(" Falha ao salvar os dados da partida no banco de dados");
             }
+
         }
 
     }

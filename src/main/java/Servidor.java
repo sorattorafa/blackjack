@@ -1,9 +1,13 @@
 /**
- * Inicializa o servico
- * autor: Rodrigo Campiolo
- * data: 22/11/2006
- * modificado em :03/05/2019
- */
+ * Inicializa o servidor com o RMI
+ *
+ * Autores:
+ *     @hmarcuzzo (Henrique Marcuzzo)
+ *     @sorattorafa (Rafael Soratto)
+ *
+ * Data de Criação: 27 de Ago de 2021
+ * Ultima alteração: 29 de Ago de 2021
+*/
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 

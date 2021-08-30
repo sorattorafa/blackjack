@@ -6,13 +6,12 @@
  *     @hmarcuzzo (Henrique Marcuzzo)
  *     @sorattorafa (Rafael Soratto)
  *
- * Data de Criação: 10 de Ago de 2021
- * Ultima alteração: 10 de Ago de 2021
+ * Data de Criação: 23 de Ago de 2021
+ * Ultima alteração: 29 de Ago de 2021
 */
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
 
 
 public interface BlackJackManagerRMI extends Remote {

@@ -20,6 +20,7 @@ import java.util.List;
 public class Cliente {
 
     public static void clearScreen() {
+        // Este método é responsável por limpar a tela
         System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     }
 
@@ -42,11 +43,7 @@ public class Cliente {
 
         String message = "";
         for (int i = 0; i < cartas.size(); i++) {
-            if (i <= cartas.size() - 1) {
-                message += cartas.get(i).get_name() + cartas.get(i).get_symbol() + " ";
-            } else {
-                message += cartas.get(i).get_name() + cartas.get(i).get_symbol() + ", ";
-            }
+            message += cartas.get(i).get_name() + cartas.get(i).get_symbol() + " ";
         }
 
         return message;
@@ -80,24 +77,21 @@ public class Cliente {
         return message;
     }
             
-
     private static String reloadScreen(BlackJackManagerRMI bjm, Jogador player, Mesa table) throws RemoteException {
         // Este método irá atualizar a tela do jogo mostrando todas as informações.
         
         String message = "";
+        Jogador opponent = table.get_opponent(player.get_nickname());
 
-        Integer player_cash = player.get_cash();
         message += "-------------------\n";
         message += "Suas informações:\n";
         message += "\tNome: " + player.get_nickname() + "\n";
-        message += "\tSaldo: " + player_cash + "\n";
+        message += "\tSaldo: " + player.get_cash() + "\n";
         message += "-------------------\n\n";
 
-        Integer table_cash = table.get_total_cash();
-        Jogador opponent = table.get_opponent(player.get_nickname());
         message += "-------------------\n";
         message += "Informações da mesa:\n";
-        message += "\tApostado: " + table_cash + "\n";
+        message += "\tApostado: " + table.get_total_cash() + "\n";
         message += "\tOponentes: " + player.get_nickname() + " vs " + opponent.get_nickname() + "\n";
         message += "-------------------\n\n";
 

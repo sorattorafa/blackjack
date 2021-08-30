@@ -4,13 +4,10 @@
  * data: 22/11/2006
  */
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.*;
 import java.util.List;
-import java.net.*;
-import java.io.*;
 import java.util.ArrayList;
 
 

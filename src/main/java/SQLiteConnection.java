@@ -1,13 +1,12 @@
 /**
  * Este código é responsável pela parte de criar uma conexão com o banco SQLITE
  * 
- * Protocolo: RPC
  *
  * @author Henrique Marcuzzo (@hmarcuzzo)
  * @author Rafael Soratto (@sorattorafa)
  * 
- * Data de Criação: 01 de Agosto de 2021 
- * Ultima alteração: 01 de Agosto de 2021
+ * Data de Criação: 27 de Agosto de 2021 
+ * Ultima alteração: 29 de Agosto de 2021
  */
 
 import java.sql.*;

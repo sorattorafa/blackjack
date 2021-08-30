@@ -130,7 +130,7 @@ public class Cliente {
         player = (Jogador) response[1];
 
         while (table.get_total_cash().equals(100)) {
-            table = bjm.get_estado_atual_mesa(table);
+            table = bjm.get_table_status(table);
         }
 
         Thread.sleep(2500);
@@ -141,7 +141,7 @@ public class Cliente {
                 clearScreen();
                 System.out.println(message);
                 
-                table = bjm.get_estado_atual_mesa(table);
+                table = bjm.get_table_status(table);
                 player = bjm.update_player_cash(player);
                 Integer status = table.get_player_statusCode(player.get_id());
                 if (status.equals(1)) {
@@ -168,7 +168,7 @@ public class Cliente {
                 }
 
                 Thread.sleep(1000);
-                table = bjm.get_estado_atual_mesa(table);
+                table = bjm.get_table_status(table);
                 player = bjm.update_player_cash(player);
                 
             } catch (Exception e) {
@@ -208,7 +208,7 @@ public class Cliente {
                 System.out.println("Procurando por jogadores. Aguarde...");
                 while (table.players_list().size() < 2) {
                     Thread.sleep(1000);
-                    table = bjm.get_estado_atual_mesa(table);
+                    table = bjm.get_table_status(table);
                 }
 
                 play_game(bjm, player, table);

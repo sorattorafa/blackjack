@@ -160,7 +160,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
     }
 
     @Override
-    public Mesa get_estado_atual_mesa(Mesa mesa) throws RemoteException {
+    public Mesa get_table_status(Mesa mesa) throws RemoteException {
         for (Mesa mesa_i : mesas) {
             if (mesa_i.get_id().equals(mesa.get_id())) {
                 return mesa_i;

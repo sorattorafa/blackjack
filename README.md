@@ -48,7 +48,8 @@ $ java -cp ":lib/*" Cliente
 ```
 
 
-Descrição de implementação
+
+### Descrição de implementação
 
 As interfaces implementadas sao utilizadas para parear, iniciar e finalizar uma partida de blackjack (21) entre dois jogadores.
 São elas:
@@ -73,10 +74,31 @@ public interface BlackJackManagerRMI extends Remote {
 ## Cliente
 
 * Cliente deve logar com suas credenciais
+  - Sera gerado uma instancia do tipo Jogador com saldo 10000.
 * Cliente deve selecionar se quer jogar ou sair do jogo
+  - Se ele jogar será retornada uma Mesa;
 * Cliente deve ter crédito para poder jogar (100)
+  - submit bet recebe um valor;
 * O Cliente tem seu saldo atualizado após uma partida
+  - Salva a partida em um histórico e atualiza o saldo do jogador no database.
 * A partida é uma mesa de uma rodada com outro jogador pareado
+  - O controle de acesso ao meio (Mesa) é realizado pelo Cliente e Servidor por meio da interface `get_table_status`
+
+
+### Jogador
+
+O jogador é salvo no banco de dados para que o seu saldo esteja sempre atualizado.
+Seu nickname é único e pode ser utilizado como identificador.
+Todo jogador inicia com 10000 de saldo, um nickname e uma senha.
+
+
+## Servidor
+O servido é o responsável por executar uma instancia do BlackJackManager para atender multíplos jogadores.
+
+### Mesa
+A mesa é a estrutura central do projeto, ela contém um baralho, dois jogadores sendo pareados,
+e um valor total para se apostar. Após receber um vencedor, um perdedor ou um empate, a mesa é finalizada
+e o cliente inicia o processo de construção de outra mesa.
 
 ## Carta
 
@@ -103,9 +125,6 @@ public class Baralho implements Serializable {
   private List<Carta> used_cards = new ArrayList<Carta>();
 ```
 
-## Servidor
-
-## Baralho
 
 Pré-requisitos
 ==============
@@ -127,15 +146,11 @@ As seguintes bibliotecas foram usadas na construção do projeto:
 Exemplos de Uso
 ==============
 
-Nesta versão o cliente e servidor são capazes de executar a Inserção, Remoção e Consulta de dados na tabela de Matrícula e consultas em na tabela de Alunos.
+### Exemplos
 
-Para isso basta selecionar uma opção no cliente e inserir todos os dados solicitados. 
+![Empate](empate.png)
+![Vitória](vitoria.png)
 
-* Lembre-se sempre de inserir dados pré existentes no banco para os campos de ***RA*** e ***CÓDIGO***!
-
-<!-- Ver exemplo abaixo:
-
-![Exemplo do Cliente](img/exemplo_cliente.png) -->
 
 Autores
 =======

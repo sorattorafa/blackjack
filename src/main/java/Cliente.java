@@ -115,46 +115,60 @@ public class Cliente {
     }
 
     private static void play_game(BlackJackManagerRMI bjm, Jogador player, Mesa table) throws IOException, InterruptedException {
-        // Este método irá controlar o fluxo do jogo.
+        /** Este método irá controlar o fluxo do jogo até que ele termine e ao final irá liberar a mesa no servidor 
+         * e redirecionar o jogador o começo do jogo. 
+         */
         System.out.println("Jogadores emparelhados");
+        Thread.sleep(1500);
         System.out.println("Embaralhando as cartas, aguarde...");
         Object[]  response = bjm.submit_bet(table, player, 100);
 
         table = (Mesa) response[0];
         player = (Jogador) response[1];
 
+        // Espera a aposta da meda mudar para garantir que os dois jogadores apostaram e estão na mesa.
         while (table.get_total_cash().equals(100)) {
             table = bjm.get_table_status(table);
         }
 
         Thread.sleep(2500);
 
+        // Inicia o jogo.
         while (true) {
             try {
                 String message = reloadScreen(bjm, player, table);
                 clearScreen();
                 System.out.println(message);
                 
+                // Pega as informações mais recentes da mesa e do jogador no servidor para tomadas de decisão.
                 table = bjm.get_table_status(table);
                 player = bjm.update_player_cash(player);
+
+                // Verifica o estado do jogador e executa a ação correspondente.
                 Integer status = table.get_player_statusCode(player.get_id());
                 if (status.equals(1)) {
                     System.out.println("Parabéns, você venceu $ " + table.get_total_cash());
                     player = bjm.update_player_cash(player);
                     break;
+
                 } else if (status.equals(2)) {
                     System.out.println("Que pena, você perdeu $ " + table.get_total_cash() / 2);
                     player = bjm.update_player_cash(player);
                     break;
+
                 } else if (status.equals(3)) {
                     System.out.println("Aguardando seu oponente...");
+
                 } else if (status.equals(4)) {
                     System.out.println("Aguardando seu oponente terminar...");
+
                 } else if (status.equals(5)) {
                     System.out.print("Você deseja Parar (1) ou Continuar (2): ");
                     Integer requestType = Integer.parseInt(new Scanner(System.in).nextLine());
-
+                    
+                    // Informa ao servior a decisão do jogador.
                     bjm.player_decision(player, table, requestType);
+
                 } else if (status.equals(6)) {
                     System.out.println("Ninguém ganhou, ninguém perdeu... Empate!");
                     player = bjm.update_player_cash(player);
@@ -162,6 +176,8 @@ public class Cliente {
                 }
 
                 Thread.sleep(1000);
+
+                // Pega as informações mais recentes da mesa e do jogador no servidor para mostrar na tela.
                 table = bjm.get_table_status(table);
                 player = bjm.update_player_cash(player);
                 
@@ -173,12 +189,16 @@ public class Cliente {
 
         System.out.print("Sair para o Lobby (1): ");
         Integer decision = Integer.parseInt(new Scanner(System.in).nextLine());
+
+        // Informa ao servidor que pode liberar a mesa.
         bjm.finish_table(table);
+
+        // Retorna para o lobby.
         enter_game(bjm, player);
     }
 
     public static void enter_game(BlackJackManagerRMI bjm, Jogador player) throws IOException, InterruptedException {
-        // Este método irá iniciar o jogo.
+        // Este método trata de iniciar o jogo até a alocar o jogador em uma mesa.
 
         clearScreen();
 
@@ -202,9 +222,11 @@ public class Cliente {
                 System.out.println("Procurando por jogadores. Aguarde...");
                 while (table.players_list().size() < 2) {
                     Thread.sleep(1000);
+                    // Pega o estado atual da mesa para checar se houve alguma mudança.
                     table = bjm.get_table_status(table);
                 }
 
+                // Inicia o jogo com os jogadores emparelhados.
                 play_game(bjm, player, table);
             } catch (Exception e) {
                 System.out.println("Não foi possível se juntar a mesa: " + e.getMessage());

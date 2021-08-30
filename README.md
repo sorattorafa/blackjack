@@ -148,8 +148,8 @@ Exemplos de Uso
 
 ### Exemplos
 
-![Empate](empate.png)
-![Vitória](vitoria.png)
+![Empate](./utils/empate.png)
+![Vitória](./utils/vitoria.png)
 
 
 Autores

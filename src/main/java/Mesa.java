@@ -19,18 +19,23 @@ import java.util.ArrayList;
 public class Mesa implements Serializable {
   // Atributos
   private Integer id;
-  private boolean is_finished = false;
+  private boolean is_finished;
 
   private Integer total_cash;
   private Baralho baralho;
 
-  private List<Jogador> players_list = new ArrayList<Jogador>();
-  private List<MaoJogador> players_hand = new ArrayList<MaoJogador>();
-  private List<StatusJogador> players_status = new ArrayList<StatusJogador>();
+  private List<Jogador> players_list;
+  private List<MaoJogador> players_hand;
+  private List<StatusJogador> players_status;
   
-
+  
+  // Construtor
   public Mesa(){
-  
+    is_finished = false;
+
+    players_list = new ArrayList<Jogador>();
+    players_hand = new ArrayList<MaoJogador>();
+    players_status = new ArrayList<StatusJogador>();
   }
 
 

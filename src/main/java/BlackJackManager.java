@@ -1,8 +1,14 @@
 /**
- * Implementacao do objeto remoto
- * autor: Rodrigo Campiolo
- * data: 22/11/2006
- */
+ * Esta classe é o controlador do jogo, tudo que o cliente necessitar fazer que altere algum estado do jogo 
+ * deve submeter ao servidor que invocará métodos desta classe.
+ *
+ * Autores:
+ *     @hmarcuzzo (Henrique Marcuzzo)
+ *     @sorattorafa (Rafael Soratto)
+ *
+ * Data de Criação: 27 de Ago de 2021
+ * Ultima alteração: 29 de Ago de 2021
+*/
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -23,19 +29,21 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public Jogador login(String nickname, String password) throws RemoteException {
+        /* Método resposável pelo login do jogador se ele estiver cadastrado no banco de dados. 
+        Caso contrário, criar um novo usuário. */
         Jogador jogador;
         String search_player_query = "SELECT J.nickname, J.id, J.cash FROM jogador AS J WHERE J.nickname IS \"" + String.valueOf(nickname) + "\" AND J.password IS \"" + String.valueOf(password) + "\";";
         
         try {
             Statement statement = db_connection.createStatement();
-             /* search for JOGADOR */
+            /* Procura se o jogador já está cadastrado no banco de dados */
             ResultSet resultSet = statement.executeQuery(search_player_query);
             if (!resultSet.isBeforeFirst()) {
-                /* NOT FOUND jogador*/
+                /* Jogador não foi encontrado, criar novo usuário */
                 
                 String create_jogador = "INSERT INTO jogador (nickname, password) VALUES ( '" + nickname + "', '" + password + "');"; 
                 statement.execute(create_jogador);
-                /* search for disiplina */
+    
                 ResultSet resultSet2 = statement.executeQuery(search_player_query);
                 if (!resultSet2.isBeforeFirst()) {
                     throw new RemoteException(" Falha ao cadastrar jogador");
@@ -47,6 +55,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 }
                  
             } else{
+                /* Jogador já está cadastrado no banco de dados, retornar usuário cadastrado */
                 String nickname_user = resultSet.getString("nickname");
                 int id = resultSet.getInt("id");
                 int cash = resultSet.getInt("cash");
@@ -60,7 +69,6 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 Statement statement = db_connection.createStatement();
                 String create_jogador = "INSERT INTO jogador (nickname, password) VALUES (" + nickname + ", " + password + ");"; 
                 statement.execute(create_jogador);
-                /* search for disiplina */
                 ResultSet resultSet2 = statement.executeQuery(search_player_query);
                 if (!resultSet2.isBeforeFirst()) {
                     throw new RemoteException(" Falha ao cadastrar jogador ");
@@ -79,59 +87,50 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public Mesa join_table(Jogador jogador) throws RemoteException {  
+        /* Método responsável por encontrar uma mesa para jogar ou criar uma se não tiver. */
         Mesa mesa = new Mesa();
         boolean found = false;
+
+        /* Se ouver mesas na lista, verificar se alguma necessita de jogador */
         if (mesas.size() > 0) {
-             for (Mesa mesa_i : mesas) {
-                    if (mesa_i.players_list().size() == 1) {
-                        found = true;
-                        mesa_i.add_player(jogador);
-                        Integer player_id = jogador.get_id();
-                        MaoJogador maojogador = new MaoJogador();
-                        StatusJogador statusjogador = new StatusJogador();
+            for (Mesa mesa_i : mesas) {
+                if (mesa_i.players_list().size() == 1) {
+                    found = true;
+                    mesa_i.add_player(jogador);
+                    Integer player_id = jogador.get_id();
+                    MaoJogador mao_jogador = new MaoJogador(player_id);
+                    StatusJogador status_jogador = new StatusJogador(player_id, 3);
 
-                        statusjogador.set_player_status(3);
-                        statusjogador.set_player_id(player_id);
+                    /* 1a carta do player que entrou na mesa */  
+                    Baralho baralho = mesa_i.get_baralho();
+                    Carta player_card = baralho.draw_card();
+                    mao_jogador.add_player_hand_carta(player_card);
 
-                        maojogador.set_player_id(player_id);
-                        
-                        /* 1a carta do player que entrou na mesa */  
-                        Baralho baralho = mesa_i.get_baralho();
-                        Carta player_card = baralho.draw_card();
-                        maojogador.add_player_hand_carta(player_card);
+                    /* 2a carta do player que iniciou a mesa */
+                    MaoJogador mao_oponente = mesa_i.get_opponent_hand(jogador.get_nickname());
+                    player_card = baralho.draw_card();
+                    mao_oponente.add_player_hand_carta(player_card);
 
-                        /* 2a carta do player que iniciou a mesa */
-                        MaoJogador maooponente = mesa_i.get_opponent_hand(jogador.get_nickname());
-                        player_card = baralho.draw_card();
-                        maooponente.add_player_hand_carta(player_card);
-
-                        /* 2a carta do player que entrou na mesa */ 
-                        player_card = baralho.draw_card();
-                        maojogador.add_player_hand_carta(player_card);
-                        
-                        mesa_i.add_mao_jogador(maojogador);
-                        mesa_i.add_player_status(statusjogador);
-                        mesa = mesa_i;
-                        break;
-                    }
+                    /* 2a carta do player que entrou na mesa */ 
+                    player_card = baralho.draw_card();
+                    mao_jogador.add_player_hand_carta(player_card);
+                    
+                    mesa_i.add_mao_jogador(mao_jogador);
+                    mesa_i.add_player_status(status_jogador);
+                    mesa = mesa_i;
+                    break;
+                }
             }  
         } 
 
+        /* Se não tiver mesas, criar uma nova mesa */
         if (!found) {
             System.out.println("Creating new table");
             try {
-         
                 Integer player_id = jogador.get_id();
-                MaoJogador maojogador = new MaoJogador();
-                StatusJogador statusjogador = new StatusJogador();
+                MaoJogador mao_jogador = new MaoJogador(player_id);
+                StatusJogador status_jogador = new StatusJogador(player_id, 5);
                 int total_mesas = mesas.size();
-
-               /* Mao do statusjogador setters*/ 
-                statusjogador.set_player_status(5);
-                statusjogador.set_player_id(player_id);
-
-               /* Mao do jogador setters*/ 
-                maojogador.set_player_id(player_id);
 
                 /* Mesa setters*/
                 mesa.set_id(total_mesas);
@@ -142,22 +141,22 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 /* 1a carta do player que iniciou a mesa */ 
                 Baralho baralho = mesa.get_baralho();
                 Carta player_card = baralho.draw_card();
-                maojogador.add_player_hand_carta(player_card);
+                mao_jogador.add_player_hand_carta(player_card);
 
-                mesa.add_mao_jogador(maojogador);
-                mesa.add_player_status(statusjogador); 
+                mesa.add_mao_jogador(mao_jogador);
+                mesa.add_player_status(status_jogador); 
 
                 mesas.add(mesa);
             } catch (Exception e) {
                 System.out.println(e);
             }
         }
-
         return mesa;
     }
 
     @Override
     public Mesa get_table_status(Mesa mesa) throws RemoteException {
+        // Este método é resposável por retornar a mesa com as informações atualizadas para o cliente.
         for (Mesa mesa_i : mesas) {
             if (mesa_i.get_id().equals(mesa.get_id())) {
                 return mesa_i;
@@ -169,8 +168,10 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public Object[] submit_bet(Mesa mesa, Jogador jogador, int valor) throws RemoteException {
+        // Este método é resposável por submeter a aposta do jogador à mesa.
         for (Mesa mesa_i : mesas) {
             if (mesa_i.get_id().equals(mesa.get_id())) {
+                // Retira o valor da aposta do jogador e atualiza o valor na mesa.
                 jogador.set_cash(jogador.get_cash() - valor);
                 mesa_i.set_total_cash(mesa_i.get_total_cash() + valor);
                 String update_saldo = "UPDATE jogador SET cash = " + jogador.get_cash()  + " WHERE (id = " + jogador.get_id() +");";
@@ -191,82 +192,83 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public void player_decision(Jogador jogador, Mesa mesa, Integer requestType) throws RemoteException {
-        
-        for (Mesa mesa_i : mesas) {
-            if (mesa_i.get_id().equals(mesa.get_id())) {
-                mesa = mesa_i;
-                break;
-            }
-        }
+        /* Este método é responsável por lidar com a decisão tomada pelo jogador e suas implicações */
+
+        /* Obter as informações mais recentes da mesa */
+        mesa = get_table_status(mesa);
 
         Jogador oponent = update_player_cash(mesa.get_opponent(jogador.get_nickname()));
-        StatusJogador statusjogador = mesa.get_players_status(jogador.get_id());
-        StatusJogador statusjogador_oponente = mesa.get_players_status(oponent.get_id());
+        StatusJogador status_jogador = mesa.get_players_status(jogador.get_id());
+        StatusJogador status_jogador_oponente = mesa.get_players_status(oponent.get_id());
 
         List<Carta> player_cards = mesa.get_player_cards(jogador.get_id());
         List<Carta> oppenent_cards = mesa.get_player_cards(oponent.get_id());
         boolean empate = false;
 
+        // Lógica para lidar com a decisão do jogador
         if (requestType == 1) {
-            statusjogador.set_player_status(4);
+            status_jogador.set_player_status(4);
 
-            if (statusjogador_oponente.get_player_status() == 3) statusjogador_oponente.set_player_status(5);
-            else if (statusjogador_oponente.get_player_status() == 4) {
+            if (status_jogador_oponente.get_player_status() == 3) status_jogador_oponente.set_player_status(5);
+            else if (status_jogador_oponente.get_player_status() == 4) {
                 Integer player_points = mesa.get_player_points(player_cards);
 
                 Integer oppenent_points = mesa.get_player_points(oppenent_cards);
 
                 if (player_points == oppenent_points) {
-                    statusjogador.set_player_status(6);
-                    statusjogador_oponente.set_player_status(6);
+                    status_jogador.set_player_status(6);
+                    status_jogador_oponente.set_player_status(6);
                     empate = true;
 
                 } else if (player_points > oppenent_points) {
-                    statusjogador.set_player_status(1);
-                    statusjogador_oponente.set_player_status(2);
+                    status_jogador.set_player_status(1);
+                    status_jogador_oponente.set_player_status(2);
 
                 } else {
-                    statusjogador.set_player_status(2);
-                    statusjogador_oponente.set_player_status(1);
+                    status_jogador.set_player_status(2);
+                    status_jogador_oponente.set_player_status(1);
 
                 }
             }
 
         } else if (requestType == 2) {
-            MaoJogador maojogador = mesa.get_mao_jogador(jogador.get_id());
+            MaoJogador mao_jogador = mesa.get_mao_jogador(jogador.get_id());
 
             Baralho baralho = mesa.get_baralho();
             Carta player_card = baralho.draw_card();
-            maojogador.add_player_hand_carta(player_card);
+            mao_jogador.add_player_hand_carta(player_card);
 
             Integer player_points = mesa.get_player_points(player_cards);
 
             if (player_points > 21) {
-                statusjogador.set_player_status(2);
-                statusjogador_oponente.set_player_status(1);
+                status_jogador.set_player_status(2);
+                status_jogador_oponente.set_player_status(1);
 
             } else {
-                if (statusjogador_oponente.get_player_status() == 3) {
-                    statusjogador.set_player_status(3);
-                    statusjogador_oponente.set_player_status(5);
-                } else if (statusjogador_oponente.get_player_status() == 4) {
-                    statusjogador.set_player_status(5);
+                if (status_jogador_oponente.get_player_status() == 3) {
+                    status_jogador.set_player_status(3);
+                    status_jogador_oponente.set_player_status(5);
+                } else if (status_jogador_oponente.get_player_status() == 4) {
+                    status_jogador.set_player_status(5);
                 }
             }
         }
         
         Integer perdedor_id = null;
         Integer ganhador_id = null;
-  
-        if(statusjogador.get_player_status() == 1 && statusjogador_oponente.get_player_status() == 2){
+        
+        // Verifica se há ganhador e perdedor
+        if(status_jogador.get_player_status() == 1 && status_jogador_oponente.get_player_status() == 2){
             ganhador_id = jogador.get_id();
             perdedor_id =  oponent.get_id();
 
-        } else if (statusjogador.get_player_status() == 2 && statusjogador_oponente.get_player_status() == 1) {
+        } else if (status_jogador.get_player_status() == 2 && status_jogador_oponente.get_player_status() == 1) {
             ganhador_id = oponent.get_id();
             perdedor_id =  jogador.get_id();
         }
 
+        /* Se houver ganhador, perdedor ou se houve empate atualiza o saldo dos jogadores, 
+        salva a partida no banco e atualiza o status da mesa para finalizada. */
         if(perdedor_id != null && ganhador_id != null) {
 
             try {
@@ -311,12 +313,11 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
                 throw new RemoteException(" Falha ao salvar os dados da partida no banco de dados");
             }
         }
-
-
     }
 
     @Override
     public Jogador update_player_cash(Jogador jogador) throws RemoteException {
+        // Atualiza o saldo do jogador de acordo com a informação do banco de dados.
         String search_player_query = "SELECT cash FROM jogador WHERE nickname IS \"" + jogador.get_nickname() + "\";";
         try {
             Statement statement = db_connection.createStatement();
@@ -339,6 +340,7 @@ public class BlackJackManager extends UnicastRemoteObject implements BlackJackMa
 
     @Override
     public void finish_table(Mesa mesa) throws RemoteException {
+        // Finaliza uma mesa e libera o espaço na memória do servidor.
         if(mesas.isEmpty()) return;
         else if(!mesas.contains(mesa)) return;
         else if(mesa.get_is_finished()){

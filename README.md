@@ -48,28 +48,23 @@ $ java -cp ":lib/*" Cliente
 ```
 
 
+Arquitetura Cliente-Servidor
+====================
 
-### Descrição de implementação
-
-As interfaces implementadas sao utilizadas para parear, iniciar e finalizar uma partida de blackjack (21) entre dois jogadores.
-São elas:
-
-```java
-
-public interface BlackJackManagerRMI extends Remote {
-    public Jogador login (String nickname, String password) throws RemoteException;
-    public Mesa join_table (Jogador jogador) throws RemoteException;
-    public Mesa get_table_status(Mesa mesa) throws RemoteException;
-    public Jogador update_player_cash(Jogador jogador) throws RemoteException;
-    public Object[] submit_bet(Mesa mesa, Jogador jogador, int valor) throws RemoteException;
-    public void player_decision(Jogador jogador, Mesa mesa, Integer requestType) throws RemoteException;
-    public void finish_table(Mesa mesa) throws RemoteException;
-}
-
-```
+A arquitetura cliente-servidor neste cenário permite que um mesmo servidor gerencie N clientes (jogadores) disputando apostas em N mesas.
+O servidor instancia dinâmicamente as meses de acordo com a entrada de novos jogadores. Cada mesa suporta 2 jogadores e 1 baralho.
+Cada cliente representa um jogador, que acessa os métodos do servidor para iniciar uma partida, realizar operações em uma mesa de aposta, 
+consultar o estado atual de uma mesa e sair de uma mesa.
 
 
-==============
+![Cliente-Servidor](./utils/cliente-servidor.png)
+
+
+## Servidor
+O servido é o responsável por executar uma instancia do BlackJackManager para atender multíplos jogadores.
+Essa instancia gerencia as mesas, as partidas e os jogadores utilizando métodos de comunicação 
+conhecidos como invocação remota entre processos (RMI).
+
 
 ## Cliente
 
@@ -85,15 +80,73 @@ public interface BlackJackManagerRMI extends Remote {
   - O controle de acesso ao meio (Mesa) é realizado pelo Cliente e Servidor por meio da interface `get_table_status`
 
 
+Interfaces
+====================
+
+As interfaces implementadas sao utilizadas para parear, iniciar e finalizar uma partida de blackjack (21) entre dois jogadores.
+São elas:
+
+```java
+
+public interface BlackJackManagerRMI extends Remote {
+
+    /* login method receives nickname and password and returns Jogador instance (player) logged in */
+    public Jogador login (String nickname, String password) throws RemoteException;
+    
+    /* join_table method receives a logged in player and return a instance o Mesa to start a new game */
+    public Mesa join_table (Jogador jogador) throws RemoteException;
+    
+    /*  
+        get_table_status receive table and returns table updated table with cards and bets of opponent
+        needs to be called periodically by player.
+    */
+    public Mesa get_table_status(Mesa mesa) throws RemoteException;
+
+    /*update_player_cash receive logged in player, save cash into DB and returns updated player*/
+    public Jogador update_player_cash(Jogador jogador) throws RemoteException;
+
+    /* submit_bet receives started table, logged in player, and betting value*/
+    public Object[] submit_bet(Mesa mesa, Jogador jogador, int valor) throws RemoteException;
+    
+
+    /* player_decision receives started table, logged in player, and requestType
+        if request type = 2 ->  means the player wants one more card
+        if request type = 1 ->  means the player don't want more cards
+    */
+    public void player_decision(Jogador jogador, Mesa mesa, Integer requestType) throws RemoteException;
+    
+    /* finish_table save table into DB and delete from memory*/
+    public void finish_table(Mesa mesa) throws RemoteException;
+}
+
+```
+
+#### Descrição das interfaces:
+  * ` Jogador login (String nickname, String password)  ` 
+    * Recebe nome e senha e retorna jogador do banco de dados ('logado');
+  * ` Mesa join_table (Jogador jogador) `
+    *  Recebe um jogador e pareia ele em uma mesa com oponente;
+  * ` Mesa get_table_status(Mesa mesa) ` 
+    *  Método para o jogador 'ouvir' a mesa e obter informações da mesa atualizada;
+  * ` Jogador update_player_cash(Jogador jogador) ` 
+    * Salva o saldo do jogador no banco de dados;
+  * ` Object[] submit_bet(Mesa mesa, Jogador jogador, int valor)  `
+    *  Realiza a aposta de um jogador em uma mesa
+  * ` void player_decision(Jogador jogador, Mesa mesa, Integer requestType) ` 
+    * Verifica se um jogador quer mais carta (requestType 2) ou se quer parar de receber cartas (requestType1)
+  * ` void finish_table(Mesa mesa) t` 
+    * Finaliza uma mesa que possui jogadores desconectados.
+
+
+Implementação
+====================
+
 ### Jogador
 
 O jogador é salvo no banco de dados para que o seu saldo esteja sempre atualizado.
 Seu nickname é único e pode ser utilizado como identificador.
 Todo jogador inicia com 10000 de saldo, um nickname e uma senha.
 
-
-## Servidor
-O servido é o responsável por executar uma instancia do BlackJackManager para atender multíplos jogadores.
 
 ### Mesa
 A mesa é a estrutura central do projeto, ela contém um baralho, dois jogadores sendo pareados,

@@ -204,7 +204,6 @@ Exemplos de Uso
 ![Empate](./utils/empate.png)
 ![Vitória](./utils/vitoria.png)
 
-
 Autores
 =======
 

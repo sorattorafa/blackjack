@@ -146,7 +146,6 @@ O jogador é salvo no banco de dados para que o seu saldo esteja sempre atualiza
 Seu nickname é único e pode ser utilizado como identificador.
 Todo jogador inicia com 10000 de saldo, um nickname e uma senha.
 
-
 ### Mesa
 A mesa é a estrutura central do projeto, ela contém um baralho, dois jogadores sendo pareados,
 e um valor total para se apostar. Após receber um vencedor, um perdedor ou um empate, a mesa é finalizada

@@ -176,7 +176,6 @@ public class Baralho implements Serializable {
   private List<Carta> used_cards = new ArrayList<Carta>();
 ```
 
-
 Pré-requisitos
 ==============
 

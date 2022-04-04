@@ -78,7 +78,6 @@ conhecidos como invocação remota entre processos (RMI).
 * A partida é uma mesa de uma rodada com outro jogador pareado
   - O controle de acesso ao meio (Mesa) é realizado pelo Cliente e Servidor por meio da interface `get_table_status`
 
-
 Interfaces
 ====================
 

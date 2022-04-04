@@ -65,7 +65,6 @@ O servido é o responsável por executar uma instancia do BlackJackManager para 
 Essa instancia gerencia as mesas, as partidas e os jogadores utilizando métodos de comunicação 
 conhecidos como invocação remota entre processos (RMI).
 
-
 ## Cliente
 
 * Cliente deve logar com suas credenciais

@@ -59,7 +59,6 @@ consultar o estado atual de uma mesa e sair de uma mesa.
 
 ![Cliente-Servidor](./utils/cliente-servidor.png)
 
-
 ## Servidor
 O servido é o responsável por executar uma instancia do BlackJackManager para atender multíplos jogadores.
 Essa instancia gerencia as mesas, as partidas e os jogadores utilizando métodos de comunicação 
